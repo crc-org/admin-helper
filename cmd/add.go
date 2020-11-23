@@ -25,7 +25,7 @@ func add(c *cli.Context) error {
 		return nil
 	}
 
-	hostsfile, err := loadHostsfile(c)
+	hostsfile, err := loadHostsfile()
 	if err != nil {
 		return err
 	}
@@ -54,5 +54,5 @@ func add(c *cli.Context) error {
 	}
 
 	logrus.Infof("hosts entry added: %s %s\n", ip, strings.Join(hostEntries, " "))
-	return debugFooter(c)
+	return nil
 }

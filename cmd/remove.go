@@ -20,7 +20,7 @@ func Remove() *cli.Command {
 }
 func remove(c *cli.Context) error {
 	args := c.Args()
-	hostsfile, err := loadHostsfile(c)
+	hostsfile, err := loadHostsfile()
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func remove(c *cli.Context) error {
 	}
 
 	logrus.Infof("entry removed: %s\n", strings.Join(hostEntries, " "))
-	return debugFooter(c)
+	return nil
 }
 
 func processSingleArg(hostsfile hostsfile.Hosts, arg string) error {
