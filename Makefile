@@ -1,7 +1,7 @@
 # Go and compilation related variables
 BUILD_DIR ?= out
 
-BINARY_NAME := goodhosts
+BINARY_NAME := admin-helper
 RELEASE_DIR ?= release
 
 # Add default target
@@ -35,9 +35,9 @@ cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY
 .PHONY: release
 release: clean cross
 	mkdir $(RELEASE_DIR)
-	tar cJSf $(RELEASE_DIR)/goodhosts-cli-macos-amd64.tar.xz -C $(BUILD_DIR)/macos-amd64 $(BINARY_NAME)
-	tar cJSf $(RELEASE_DIR)/goodhosts-cli-linux-amd64.tar.xz -C $(BUILD_DIR)/linux-amd64 $(BINARY_NAME)
-	tar cJSf $(RELEASE_DIR)/goodhosts-cli-windows-amd64.tar.xz -C $(BUILD_DIR)/windows-amd64 $(BINARY_NAME).exe
+	tar cJSf $(RELEASE_DIR)/admin-helper-macos-amd64.tar.xz -C $(BUILD_DIR)/macos-amd64 $(BINARY_NAME)
+	tar cJSf $(RELEASE_DIR)/admin-helper-linux-amd64.tar.xz -C $(BUILD_DIR)/linux-amd64 $(BINARY_NAME)
+	tar cJSf $(RELEASE_DIR)/admin-helper-windows-amd64.tar.xz -C $(BUILD_DIR)/windows-amd64 $(BINARY_NAME).exe
 
 	pushd $(RELEASE_DIR) && sha256sum * > sha256sum.txt && popd
 

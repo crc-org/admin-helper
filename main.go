@@ -3,14 +3,14 @@ package main
 import (
 	"os"
 
-	"github.com/goodhosts/cli/cmd"
+	"github.com/code-ready/admin-helper/cmd"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := &cli.App{
-		Name:     "goodhosts",
+		Name:     "admin-helper",
 		Usage:    "manage your hosts file goodly",
 		Commands: cmd.Commands(),
 	}

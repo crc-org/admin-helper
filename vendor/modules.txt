@@ -4,10 +4,6 @@ github.com/cpuguy83/go-md2man/v2/md2man
 github.com/goodhosts/hostsfile
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/mattn/go-runewidth v0.0.7
-github.com/mattn/go-runewidth
-# github.com/olekukonko/tablewriter v0.0.4
-github.com/olekukonko/tablewriter
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
