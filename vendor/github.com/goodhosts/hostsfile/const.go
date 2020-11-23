@@ -1,6 +1,9 @@
-// +build linux darwin
+// +build !windows
 
 package hostsfile
 
-const HostsFilePath = "/etc/hosts"
-const eol = "\n"
+const (
+	HostsPerLine  = -1 // unlimited
+	HostsFilePath = "/etc/hosts"
+	eol           = "\n"
+)
