@@ -4,11 +4,15 @@ BUILD_DIR ?= out
 BINARY_NAME := admin-helper
 RELEASE_DIR ?= release
 
+LDFLAGS := -extldflags='-static' -s -w
+
 # Add default target
 .PHONY: all
 all: build
 
+.PHONY: vendor
 vendor:
+	go mod tidy
 	go mod vendor
 
 $(BUILD_DIR):
@@ -17,17 +21,16 @@ $(BUILD_DIR):
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf vendor
 	rm -fr release
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
-	GOARCH=amd64 GOOS=darwin go build -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) ./main.go
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) ./main.go
 
 $(BUILD_DIR)/linux-amd64/$(BINARY_NAME):
-	GOOS=linux GOARCH=amd64 go build -o $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) ./main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) ./main.go
 
 $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
-	GOARCH=amd64 GOOS=windows go build -o $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe ./main.go
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe ./main.go
 
 .PHONY: cross ## Cross compiles all binaries
 cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
@@ -43,5 +46,5 @@ release: clean cross
 
 .PHONY: build
 build:
-	go build -o $(BINARY_NAME) ./main.go
+	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) ./main.go
 
