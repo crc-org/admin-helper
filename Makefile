@@ -1,5 +1,5 @@
 # Go and compilation related variables
-VERSION ?= dev
+VERSION ?= $(shell git describe --tags --dirty)
 BUILD_DIR ?= out
 
 BINARY_NAME := admin-helper
