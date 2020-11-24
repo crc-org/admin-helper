@@ -1,10 +1,11 @@
 # Go and compilation related variables
+VERSION ?= dev
 BUILD_DIR ?= out
 
 BINARY_NAME := admin-helper
 RELEASE_DIR ?= release
 
-LDFLAGS := -extldflags='-static' -s -w
+LDFLAGS := -X main.Version=$(VERSION) -extldflags='-static' -s -w
 
 # Add default target
 .PHONY: all
