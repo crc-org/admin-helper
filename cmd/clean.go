@@ -1,29 +1,29 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 )
 
-func Clean() *cli.Command {
-	return &cli.Command{
-		Name:   "clean",
-		Usage:  "clean all entries added with a particular suffix",
-		Action: clean,
-	}
+var Clean = &cobra.Command{
+	Use:   "clean",
+	Short: "Clean all entries added with a particular suffix",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return clean(args)
+	},
 }
-func clean(c *cli.Context) error {
-	args := c.Args()
 
-	if args.Len() < 1 {
-		return cli.NewExitError("clean requires at least one domain suffix", 1)
+func clean(args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("clean requires at least one domain suffix")
 	}
 
 	var suffixes []string
-	for _, suffix := range args.Slice() {
+	for _, suffix := range args {
 		if !strings.HasPrefix(suffix, ".") {
-			return cli.NewExitError("suffix should start with a dot", 1)
+			return fmt.Errorf("suffix should start with a dot")
 		}
 		suffixes = append(suffixes, suffix)
 	}

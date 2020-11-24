@@ -1,30 +1,29 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/goodhosts/hostsfile"
 	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 )
 
-func Commands() []*cli.Command {
-	return []*cli.Command{
-		Add(),
-		Remove(),
-		Clean(),
+func Commands() []*cobra.Command {
+	return []*cobra.Command{
+		Add,
+		Remove,
+		Clean,
 	}
 }
 
-func loadHostsfile() (hostsfile.Hosts, error) {
-	logrus.Debugf("loading default hosts file: %s\n", hostsfile.HostsFilePath)
-	hfile, err := hostsfile.NewHosts()
-
+func loadHostsFile() (hostsfile.Hosts, error) {
+	logrus.Debugf("loading default hosts file: %s", hostsfile.HostsFilePath)
+	file, err := hostsfile.NewHosts()
 	if err != nil {
-		return hfile, cli.NewExitError(err, 1)
+		return file, err
 	}
-
-	if !hfile.IsWritable() {
-		return hfile, cli.NewExitError("Host file not writable. Try running with elevated privileges.", 1)
+	if !file.IsWritable() {
+		return file, fmt.Errorf("host file not writable, try running with elevated privileges")
 	}
-
-	return hfile, nil
+	return file, nil
 }

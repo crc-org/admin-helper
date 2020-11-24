@@ -1,22 +1,23 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/code-ready/admin-helper/cmd"
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+
+	"github.com/spf13/cobra"
 )
 
 func main() {
-	app := &cli.App{
-		Name:     "admin-helper",
-		Usage:    "manage your hosts file goodly",
-		Commands: cmd.Commands(),
+	rootCmd := &cobra.Command{
+		Use: "admin-helper",
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
-		logrus.Fatal(err)
+	rootCmd.AddCommand(cmd.Commands()...)
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
