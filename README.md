@@ -7,20 +7,20 @@ This project gathers all the interactions with the hosts that need to perform Co
 For full usage directions simply call `admin-helper -h`
 
 ```shell
-NAME:
-   admin-helper - manage your hosts file goodly
+Usage:
+  admin-helper [command]
 
-USAGE:
-   admin-helper [global options] command [command options] [arguments...]
+Available Commands:
+  add         Add an entry to the hostsfile
+  clean       Clean all entries added with a particular suffix
+  help        Help about any command
+  remove      Remove host(s) if exists
 
-COMMANDS:
-   add, a         Add an entry to the hostsfile
-   remove, rm, r  Remove ip or host(s) if exists
-   help, h        Shows a list of commands or help for one command
+Flags:
+  -h, --help      help for admin-helper
+  -v, --version   version for admin-helper
 
-GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
-
+Use "admin-helper [command] --help" for more information about a command.
 ```
 
 ## License
