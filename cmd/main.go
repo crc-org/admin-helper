@@ -10,6 +10,7 @@ func Commands() []*cli.Command {
 	return []*cli.Command{
 		Add(),
 		Remove(),
+		Clean(),
 	}
 }
 
