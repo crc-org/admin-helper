@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/code-ready/admin-helper/pkg/hosts"
 	"github.com/spf13/cobra"
 )
 
@@ -19,26 +20,9 @@ func add(args []string) error {
 	if len(args) < 2 {
 		return fmt.Errorf("adding to hosts file requires an ip and a hostname")
 	}
-
-	hostsFile, err := loadHostsFile()
+	hosts, err := hosts.New()
 	if err != nil {
 		return err
 	}
-
-	ip := args[0]
-	uniqueHosts := map[string]bool{}
-	var hostEntries []string
-
-	for i := 1; i < len(args); i++ {
-		uniqueHosts[args[i]] = true
-	}
-
-	for key := range uniqueHosts {
-		hostEntries = append(hostEntries, key)
-	}
-
-	if err := hostsFile.Add(ip, hostEntries...); err != nil {
-		return err
-	}
-	return hostsFile.Flush()
+	return hosts.Add(args[0], args[1:])
 }

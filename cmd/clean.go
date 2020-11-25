@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
+	"github.com/code-ready/admin-helper/pkg/hosts"
 	"github.com/spf13/cobra"
 )
 
@@ -20,35 +20,9 @@ func clean(args []string) error {
 		return fmt.Errorf("clean requires at least one domain suffix")
 	}
 
-	var suffixes []string
-	for _, suffix := range args {
-		if !strings.HasPrefix(suffix, ".") {
-			return fmt.Errorf("suffix should start with a dot")
-		}
-		suffixes = append(suffixes, suffix)
-	}
-
-	hostsFile, err := loadHostsFile()
+	hosts, err := hosts.New()
 	if err != nil {
 		return err
 	}
-
-	var toDelete []string
-	for _, line := range hostsFile.Lines {
-		for _, host := range line.Hosts {
-			for _, suffix := range suffixes {
-				if strings.HasSuffix(host, suffix) {
-					toDelete = append(toDelete, host)
-					break
-				}
-			}
-		}
-	}
-
-	for _, host := range toDelete {
-		if err := hostsFile.RemoveByHostname(host); err != nil {
-			return err
-		}
-	}
-	return hostsFile.Flush()
+	return hosts.Clean(args)
 }

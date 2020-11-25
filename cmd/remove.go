@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/code-ready/admin-helper/pkg/hosts"
 	"github.com/spf13/cobra"
 )
 
@@ -18,27 +19,9 @@ func remove(args []string) error {
 		return nil
 	}
 
-	hostsFile, err := loadHostsFile()
+	hosts, err := hosts.New()
 	if err != nil {
 		return err
 	}
-
-	uniqueHosts := map[string]bool{}
-	var hostEntries []string
-
-	for i := 0; i < len(args); i++ {
-		uniqueHosts[args[i]] = true
-	}
-
-	for key := range uniqueHosts {
-		hostEntries = append(hostEntries, key)
-	}
-
-	for _, host := range hostEntries {
-		if err := hostsFile.RemoveByHostname(host); err != nil {
-			return err
-		}
-	}
-
-	return hostsFile.Flush()
+	return hosts.Remove(args)
 }
