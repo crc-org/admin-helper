@@ -2,6 +2,7 @@ package hosts
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/goodhosts/hostsfile"
@@ -34,6 +35,8 @@ func (h *Hosts) Add(ip string, hosts []string) error {
 	for key := range uniqueHosts {
 		hostEntries = append(hostEntries, key)
 	}
+
+	sort.Strings(hostEntries)
 
 	if err := h.File.Add(ip, hostEntries...); err != nil {
 		return err

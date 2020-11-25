@@ -20,12 +20,12 @@ func TestAdd(t *testing.T) {
 
 	host := hosts(t, hostsFile)
 
-	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2"}))
-	assert.NoError(t, host.Add("127.0.0.2", []string{"entry3"}))
+	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2", "entry3"}))
+	assert.NoError(t, host.Add("127.0.0.2", []string{"entry4"}))
 
 	content, err := ioutil.ReadFile(hostsFile)
 	assert.NoError(t, err)
-	assert.Equal(t, "127.0.0.1 entry1 entry2\n127.0.0.2 entry3\n", string(content))
+	assert.Equal(t, "127.0.0.1 entry1 entry2 entry3\n127.0.0.2 entry4\n", string(content))
 }
 
 func TestRemove(t *testing.T) {
