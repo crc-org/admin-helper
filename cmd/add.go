@@ -1,58 +1,44 @@
 package cmd
 
 import (
-	"strings"
+	"fmt"
 
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 )
 
-func Add() *cli.Command {
-	return &cli.Command{
-		Name:      "add",
-		Aliases:   []string{"a"},
-		Usage:     "Add an entry to the hostsfile",
-		Action:    add,
-		ArgsUsage: "[IP] [HOST] ([HOST]...)",
-	}
+var Add = &cobra.Command{
+	Use:     "add",
+	Aliases: []string{"a"},
+	Short:   "Add an entry to the hostsfile",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return add(args)
+	},
 }
-func add(c *cli.Context) error {
 
-	args := c.Args()
-
-	if args.Len() < 2 {
-		logrus.Infof("adding a hostsfile entry requires an ip and a hostname.")
-		return nil
+func add(args []string) error {
+	if len(args) < 2 {
+		return fmt.Errorf("adding to hosts file requires an ip and a hostname")
 	}
 
-	hostsfile, err := loadHostsfile(c)
+	hostsFile, err := loadHostsFile()
 	if err != nil {
 		return err
 	}
 
-	ip := args.Slice()[0]
+	ip := args[0]
 	uniqueHosts := map[string]bool{}
 	var hostEntries []string
 
-	for i := 1; i < args.Len(); i++ {
-		uniqueHosts[args.Slice()[i]] = true
+	for i := 1; i < len(args); i++ {
+		uniqueHosts[args[i]] = true
 	}
 
-	for key, _ := range uniqueHosts {
+	for key := range uniqueHosts {
 		hostEntries = append(hostEntries, key)
 	}
 
-	err = hostsfile.Add(ip, hostEntries...)
-	if err != nil {
-		return cli.NewExitError(err.Error(), 2)
+	if err := hostsFile.Add(ip, hostEntries...); err != nil {
+		return err
 	}
-
-	logrus.Debugln("flushing hosts file to disk")
-	err = hostsfile.Flush()
-	if err != nil {
-		return cli.NewExitError(err.Error(), 2)
-	}
-
-	logrus.Infof("hosts entry added: %s %s\n", ip, strings.Join(hostEntries, " "))
-	return debugFooter(c)
+	return hostsFile.Flush()
 }
