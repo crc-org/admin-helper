@@ -12,8 +12,9 @@ var Version = "dev"
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:     "admin-helper",
-		Version: Version,
+		Use:          "admin-helper",
+		Version:      Version,
+		SilenceUsage: true,
 	}
 
 	rootCmd.AddCommand(cmd.Commands()...)

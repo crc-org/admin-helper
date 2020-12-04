@@ -37,7 +37,7 @@ $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
 cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
 
 .PHONY: release
-release: clean cross
+release: clean lint test cross
 	mkdir $(RELEASE_DIR)
 	tar cJSf $(RELEASE_DIR)/admin-helper-macos-amd64.tar.xz -C $(BUILD_DIR)/macos-amd64 $(BINARY_NAME)
 	tar cJSf $(RELEASE_DIR)/admin-helper-linux-amd64.tar.xz -C $(BUILD_DIR)/linux-amd64 $(BINARY_NAME)
@@ -49,3 +49,10 @@ release: clean cross
 build:
 	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) ./main.go
 
+.PHONY: lint
+lint:
+	golangci-lint run
+
+.PHONY: test
+test:
+	go test ./...

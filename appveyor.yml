@@ -1,0 +1,14 @@
+build: off
+
+clone_folder: c:\gopath\src\github.com\code-ready\admin-helper
+
+environment:
+  GOPATH: c:\gopath
+
+stack: go 1.13
+
+before_test:
+  - choco install make
+
+test_script:
+  - make test
