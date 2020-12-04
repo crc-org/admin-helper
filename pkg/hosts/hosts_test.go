@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/goodhosts/hostsfile"
@@ -25,7 +26,7 @@ func TestAdd(t *testing.T) {
 
 	content, err := ioutil.ReadFile(hostsFile)
 	assert.NoError(t, err)
-	assert.Equal(t, "127.0.0.1 entry1 entry2 entry3\n127.0.0.2 entry4\n", string(content))
+	assert.Equal(t, "127.0.0.1 entry1 entry2 entry3"+eol()+"127.0.0.2 entry4"+eol(), string(content))
 }
 
 func TestRemove(t *testing.T) {
@@ -42,7 +43,7 @@ func TestRemove(t *testing.T) {
 
 	content, err := ioutil.ReadFile(hostsFile)
 	assert.NoError(t, err)
-	assert.Equal(t, "127.0.0.1 entry1\n", string(content))
+	assert.Equal(t, "127.0.0.1 entry1"+eol(), string(content))
 }
 
 func TestClean(t *testing.T) {
@@ -59,7 +60,7 @@ func TestClean(t *testing.T) {
 
 	content, err := ioutil.ReadFile(hostsFile)
 	assert.NoError(t, err)
-	assert.Equal(t, "127.0.0.1 entry2.suffix2\n", string(content))
+	assert.Equal(t, "127.0.0.1 entry2.suffix2"+eol(), string(content))
 }
 
 func hosts(t *testing.T, hostsFile string) Hosts {
@@ -68,4 +69,11 @@ func hosts(t *testing.T, hostsFile string) Hosts {
 	return Hosts{
 		File: &file,
 	}
+}
+
+func eol() string {
+	if runtime.GOOS == "windows" {
+		return "\r\n"
+	}
+	return "\n"
 }
