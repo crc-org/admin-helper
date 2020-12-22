@@ -91,3 +91,7 @@ func (h *Hosts) Clean(rawSuffixes []string) error {
 	}
 	return h.File.Flush()
 }
+
+func (h *Hosts) Contains(ip, host string) bool {
+	return h.File.Has(ip, host)
+}

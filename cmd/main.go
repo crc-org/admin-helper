@@ -9,5 +9,6 @@ func Commands() []*cobra.Command {
 		Add,
 		Remove,
 		Clean,
+		Contains,
 	}
 }
