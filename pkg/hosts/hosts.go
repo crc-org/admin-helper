@@ -17,15 +17,16 @@ func New() (*Hosts, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !file.IsWritable() {
-		return nil, fmt.Errorf("host file not writable, try running with elevated privileges")
-	}
 	return &Hosts{
 		File: &file,
 	}, nil
 }
 
 func (h *Hosts) Add(ip string, hosts []string) error {
+	if err := h.checkIsWritable(); err != nil {
+		return err
+	}
+
 	uniqueHosts := map[string]bool{}
 	for i := 0; i < len(hosts); i++ {
 		uniqueHosts[hosts[i]] = true
@@ -45,6 +46,10 @@ func (h *Hosts) Add(ip string, hosts []string) error {
 }
 
 func (h *Hosts) Remove(hosts []string) error {
+	if err := h.checkIsWritable(); err != nil {
+		return err
+	}
+
 	uniqueHosts := map[string]bool{}
 	for i := 0; i < len(hosts); i++ {
 		uniqueHosts[hosts[i]] = true
@@ -64,6 +69,10 @@ func (h *Hosts) Remove(hosts []string) error {
 }
 
 func (h *Hosts) Clean(rawSuffixes []string) error {
+	if err := h.checkIsWritable(); err != nil {
+		return err
+	}
+
 	var suffixes []string
 	for _, suffix := range rawSuffixes {
 		if !strings.HasPrefix(suffix, ".") {
@@ -90,4 +99,15 @@ func (h *Hosts) Clean(rawSuffixes []string) error {
 		}
 	}
 	return h.File.Flush()
+}
+
+func (h *Hosts) checkIsWritable() error {
+	if !h.File.IsWritable() {
+		return fmt.Errorf("host file not writable, try running with elevated privileges")
+	}
+	return nil
+}
+
+func (h *Hosts) Contains(ip, host string) bool {
+	return h.File.Has(ip, host)
 }

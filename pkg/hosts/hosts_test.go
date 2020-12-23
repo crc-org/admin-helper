@@ -63,6 +63,21 @@ func TestClean(t *testing.T) {
 	assert.Equal(t, "127.0.0.1 entry2.suffix2"+eol(), string(content))
 }
 
+func TestContains(t *testing.T) {
+	dir, err := ioutil.TempDir("", "hosts")
+	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	hostsFile := filepath.Join(dir, "hosts")
+	assert.NoError(t, ioutil.WriteFile(hostsFile, []byte(`127.0.0.1 entry1.suffix1 entry2.suffix2`), 0600))
+
+	host := hosts(t, hostsFile)
+
+	assert.True(t, host.Contains("127.0.0.1", "entry1.suffix1"))
+	assert.False(t, host.Contains("127.0.0.2", "entry1.suffix1"))
+	assert.False(t, host.Contains("127.0.0.1", "entry1.suffix2"))
+}
+
 func hosts(t *testing.T, hostsFile string) Hosts {
 	file, err := hostsfile.NewCustomHosts(hostsFile)
 	assert.NoError(t, err)
