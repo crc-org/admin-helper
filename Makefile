@@ -39,10 +39,9 @@ cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY
 .PHONY: release
 release: clean lint test cross
 	mkdir $(RELEASE_DIR)
-	tar cJSf $(RELEASE_DIR)/admin-helper-macos-amd64.tar.xz -C $(BUILD_DIR)/macos-amd64 $(BINARY_NAME)
-	tar cJSf $(RELEASE_DIR)/admin-helper-linux-amd64.tar.xz -C $(BUILD_DIR)/linux-amd64 $(BINARY_NAME)
-	tar cJSf $(RELEASE_DIR)/admin-helper-windows-amd64.tar.xz -C $(BUILD_DIR)/windows-amd64 $(BINARY_NAME).exe
-
+	cp $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-linux
+	cp $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-darwin
+	cp $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe $(RELEASE_DIR)/$(BINARY_NAME)-windows.exe
 	pushd $(RELEASE_DIR) && sha256sum * > sha256sum.txt && popd
 
 .PHONY: build
