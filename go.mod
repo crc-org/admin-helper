@@ -1,6 +1,6 @@
 module github.com/code-ready/admin-helper
 
-go 1.13
+go 1.14
 
 require (
 	github.com/dimchansky/utfbom v1.1.1 // indirect
