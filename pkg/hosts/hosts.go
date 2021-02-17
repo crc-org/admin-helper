@@ -2,14 +2,28 @@ package hosts
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 
 	"github.com/goodhosts/hostsfile"
 )
 
+const (
+	// source https://github.com/kubernetes/apimachinery/blob/603e04655e9f537eb01238cdbce4891f832a4f27/pkg/util/validation/validation.go#L208
+	dns1123SubdomainRegexp = `[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*`
+	clusterDomain          = ".crc.testing"
+	appsDomain             = ".apps-crc.testing"
+)
+
+var (
+	clusterRegexp = regexp.MustCompile("^" + dns1123SubdomainRegexp + regexp.QuoteMeta(clusterDomain) + "$")
+	appRegexp     = regexp.MustCompile("^" + dns1123SubdomainRegexp + regexp.QuoteMeta(appsDomain) + "$")
+)
+
 type Hosts struct {
-	File *hostsfile.Hosts
+	File       *hostsfile.Hosts
+	HostFilter func(string) bool
 }
 
 func New() (*Hosts, error) {
@@ -17,12 +31,22 @@ func New() (*Hosts, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Hosts{
-		File: &file,
+		File:       &file,
+		HostFilter: defaultFilter,
 	}, nil
 }
 
+func defaultFilter(s string) bool {
+	return clusterRegexp.MatchString(s) || appRegexp.MatchString(s)
+}
+
 func (h *Hosts) Add(ip string, hosts []string) error {
+	if err := h.verifyHosts(hosts); err != nil {
+		return err
+	}
+
 	if err := h.checkIsWritable(); err != nil {
 		return err
 	}
@@ -46,6 +70,10 @@ func (h *Hosts) Add(ip string, hosts []string) error {
 }
 
 func (h *Hosts) Remove(hosts []string) error {
+	if err := h.verifyHosts(hosts); err != nil {
+		return err
+	}
+
 	if err := h.checkIsWritable(); err != nil {
 		return err
 	}
@@ -69,6 +97,10 @@ func (h *Hosts) Remove(hosts []string) error {
 }
 
 func (h *Hosts) Clean(rawSuffixes []string) error {
+	if err := h.verifyHosts(rawSuffixes); err != nil {
+		return err
+	}
+
 	if err := h.checkIsWritable(); err != nil {
 		return err
 	}
@@ -109,5 +141,18 @@ func (h *Hosts) checkIsWritable() error {
 }
 
 func (h *Hosts) Contains(ip, host string) bool {
+	if err := h.verifyHosts([]string{host}); err != nil {
+		return false
+	}
+
 	return h.File.Has(ip, host)
+}
+
+func (h *Hosts) verifyHosts(hosts []string) error {
+	for _, host := range hosts {
+		if !h.HostFilter(host) {
+			return fmt.Errorf("input %s rejected", host)
+		}
+	}
+	return nil
 }

@@ -78,11 +78,37 @@ func TestContains(t *testing.T) {
 	assert.False(t, host.Contains("127.0.0.1", "entry1.suffix2"))
 }
 
+func TestSuffixFilter(t *testing.T) {
+	dir, err := ioutil.TempDir("", "hosts")
+	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	hostsFile := filepath.Join(dir, "hosts")
+	assert.NoError(t, ioutil.WriteFile(hostsFile, []byte(`127.0.0.1 localhost`), 0600))
+
+	file, err := hostsfile.NewCustomHosts(hostsFile)
+	assert.NoError(t, err)
+	host := Hosts{
+		File:       &file,
+		HostFilter: defaultFilter,
+	}
+
+	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1.crc.testing"}))
+	assert.NoError(t, host.Add("127.0.0.1", []string{"entry2.nested.crc.testing"}))
+	assert.Error(t, host.Add("127.0.0.1", []string{"evildomain #apps.crc.testing"}))
+	assert.Error(t, host.Add("127.0.0.1", []string{"host.poison"}))
+	assert.Error(t, host.Add("127.0.0.1", []string{"CAPITAL.crc.testing"}))
+	assert.Error(t, host.Remove([]string{"localhost"}))
+}
+
 func hosts(t *testing.T, hostsFile string) Hosts {
 	file, err := hostsfile.NewCustomHosts(hostsFile)
 	assert.NoError(t, err)
 	return Hosts{
 		File: &file,
+		HostFilter: func(s string) bool {
+			return true
+		},
 	}
 }
 
