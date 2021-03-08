@@ -1,0 +1,85 @@
+# https://github.com/code-ready/admin-helper
+%global goipath         github.com/code-ready/admin-helper
+Version:                0.0.2
+
+%gometa
+
+%global gobuilddir %{_builddir}/%{archivename}/_build
+
+# debuginfo is not supported on RHEL with Go packages
+%global debug_package %{nil}
+%global _enable_debug_package 0
+
+%global common_description %{expand:
+CodeReady Container's helper with administrative privileges}
+
+
+%global golicenses    LICENSE
+%global godocs        *.md
+
+Name:           %{goname}
+Release:        1%{?dist}
+Summary:        CodeReady Container's helper with administrative privileges
+License:        MIT
+URL:            %{gourl}
+Source0:        %{gosource}
+
+#generate_buildrequires
+#go_generate_buildrequires
+
+BuildRequires: git-core
+BuildRequires: go-srpm-macros
+BuildRequires: make
+
+Provides: bundled(golang(github.com/davecgh/go-spew)) = 1.1.1
+Provides: bundled(golang(github.com/dimchansky/utfbom)) = 1.1.1
+Provides: bundled(golang(github.com/goodhosts/hostsfile)) = 0.0.7
+Provides: bundled(golang(github.com/inconshreveable/mousetrap)) = 1.0.0
+Provides: bundled(golang(github.com/pmezard/go-difflib)) = 1.0.0
+Provides: bundled(golang(github.com/spf13/cobra)) = 1.1.1
+Provides: bundled(golang(github.com/spf13/pflag)) = 1.0.5
+Provides: bundled(golang(github.com/stretchr/testify)) = 1.3.0
+
+%description
+%{common_description}
+
+%gopkg
+
+%prep
+# with fedora macros: goprep -k
+%autosetup -S git -n %{archivename}
+install -m 0755 -vd "$(dirname %{gobuilddir}/src/%{goipath})"
+ln -fs "$(pwd)" "%{gobuilddir}/src/%{goipath}"
+
+%build
+export GOFLAGS="-mod=vendor"
+make VERSION=%{version} GO_LDFLAGS="-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" GO_BUILDFLAGS="-a -v -x" cross
+
+%install
+# with fedora macros: gopkginstall
+install -m 0755 -vd                     %{buildroot}%{_bindir}
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/admin-helper %{buildroot}%{_bindir}/
+
+install -d %{buildroot}%{_datadir}/%{name}-redistributable/{linux,macos,windows}
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/linux/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/windows-amd64/admin-helper.exe %{buildroot}%{_datadir}/%{name}-redistributable/windows/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-amd64/admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
+
+%check
+# with fedora macros: gocheck
+export GOFLAGS="-mod=vendor"
+go test ./...
+
+%files
+%license %{golicenses}
+%doc
+%{_bindir}/*
+%{_datadir}/%{name}-redistributable/linux/*
+%{_datadir}/%{name}-redistributable/macos/*
+%{_datadir}/%{name}-redistributable/windows/*
+
+#gopkgfiles
+
+%changelog
+* Wed Feb 03 2021 Christophe Fergeau <cfergeau@redhat.com> - 0.0.2-1
+- Initial import in Fedora
