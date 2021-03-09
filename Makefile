@@ -2,6 +2,8 @@
 VERSION ?= $(shell git describe --tags --dirty)
 BUILD_DIR ?= out
 
+GOPATH ?= $(shell go env GOPATH)
+
 BINARY_NAME := admin-helper
 RELEASE_DIR ?= release
 
@@ -23,6 +25,7 @@ $(BUILD_DIR):
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -fr release
+	rm -fr crc-admin-helper.spec
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./main.go
@@ -55,3 +58,14 @@ lint:
 .PHONY: test
 test:
 	go test ./...
+
+.PHONY: spec
+spec: crc-admin-helper.spec
+
+$(GOPATH)/bin/gomod2rpmdeps:
+	pushd /tmp && GO111MODULE=on go get github.com/cfergeau/gomod2rpmdeps/cmd/gomod2rpmdeps && popd
+
+%.spec: %.spec.in $(GOPATH)/bin/gomod2rpmdeps
+	@$(GOPATH)/bin/gomod2rpmdeps | sed -e '/__BUNDLED_REQUIRES__/r /dev/stdin' \
+					   -e '/__BUNDLED_REQUIRES__/d' \
+				       $< >$@
