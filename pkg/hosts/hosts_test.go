@@ -84,7 +84,7 @@ func TestSuffixFilter(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	hostsFile := filepath.Join(dir, "hosts")
-	assert.NoError(t, ioutil.WriteFile(hostsFile, []byte(`127.0.0.1 localhost`), 0600))
+	assert.NoError(t, ioutil.WriteFile(hostsFile, []byte(`127.0.0.1 localhost localhost.localdomain`), 0600))
 
 	file, err := hostsfile.NewCustomHosts(hostsFile)
 	assert.NoError(t, err)
@@ -99,6 +99,8 @@ func TestSuffixFilter(t *testing.T) {
 	assert.Error(t, host.Add("127.0.0.1", []string{"host.poison"}))
 	assert.Error(t, host.Add("127.0.0.1", []string{"CAPITAL.crc.testing"}))
 	assert.Error(t, host.Remove([]string{"localhost"}))
+	assert.NoError(t, host.Clean([]string{".crc.testing"}))
+	assert.Error(t, host.Clean([]string{".localdomain"}))
 }
 
 func hosts(t *testing.T, hostsFile string) Hosts {

@@ -97,10 +97,6 @@ func (h *Hosts) Remove(hosts []string) error {
 }
 
 func (h *Hosts) Clean(rawSuffixes []string) error {
-	if err := h.verifyHosts(rawSuffixes); err != nil {
-		return err
-	}
-
 	if err := h.checkIsWritable(); err != nil {
 		return err
 	}
@@ -123,6 +119,10 @@ func (h *Hosts) Clean(rawSuffixes []string) error {
 				}
 			}
 		}
+	}
+
+	if err := h.verifyHosts(toDelete); err != nil {
+		return err
 	}
 
 	for _, host := range toDelete {
