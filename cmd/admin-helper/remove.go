@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"github.com/code-ready/admin-helper/pkg/hosts"

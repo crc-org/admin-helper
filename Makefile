@@ -28,13 +28,13 @@ clean:
 	rm -fr crc-admin-helper.spec
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./main.go
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/linux-amd64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe $(GO_BUILDFLAGS) ./main.go
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 .PHONY: cross ## Cross compiles all binaries
 cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
@@ -49,7 +49,7 @@ release: clean lint test cross
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./main.go
+	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 .PHONY: lint
 lint:
