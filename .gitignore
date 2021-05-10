@@ -1,6 +1,6 @@
 .DS_Store
-admin-helper
-admin-helper.exe
+/admin-helper
+/admin-helper.exe
 .idea
 dist
 out

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/code-ready/admin-helper/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +16,7 @@ func main() {
 		SilenceUsage: true,
 	}
 
-	rootCmd.AddCommand(cmd.Commands()...)
+	rootCmd.AddCommand(Add, Remove, Clean, Contains)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
