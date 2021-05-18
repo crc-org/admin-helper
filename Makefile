@@ -4,7 +4,7 @@ BUILD_DIR ?= out
 
 GOPATH ?= $(shell go env GOPATH)
 
-BINARY_NAME := admin-helper
+BINARY_NAME := crc-admin-helper
 RELEASE_DIR ?= release
 
 LDFLAGS := -X main.Version=$(VERSION) -extldflags='-static' -s -w $(GO_LDFLAGS)
