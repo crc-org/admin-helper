@@ -7,7 +7,7 @@ github.com/davecgh/go-spew/spew
 # github.com/dimchansky/utfbom v1.1.1
 ## explicit
 github.com/dimchansky/utfbom
-# github.com/goodhosts/hostsfile v0.0.7
+# github.com/goodhosts/hostsfile v0.0.8
 ## explicit
 github.com/goodhosts/hostsfile
 # github.com/inconshreveable/mousetrap v1.0.0
