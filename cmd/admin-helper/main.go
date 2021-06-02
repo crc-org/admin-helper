@@ -3,20 +3,23 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 
+	"github.com/code-ready/admin-helper/pkg/constants"
 	"github.com/spf13/cobra"
 )
-
-var Version = "dev"
 
 func main() {
 	rootCmd := &cobra.Command{
 		Use:          "admin-helper",
-		Version:      Version,
+		Version:      constants.Version,
 		SilenceUsage: true,
 	}
 
 	rootCmd.AddCommand(Add, Remove, Clean, Contains)
+	if runtime.GOOS == "windows" {
+		rootCmd.AddCommand(InstallDaemon, UninstallDaemon, Daemon)
+	}
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
