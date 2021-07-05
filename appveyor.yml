@@ -5,7 +5,7 @@ clone_folder: c:\gopath\src\github.com\code-ready\admin-helper
 environment:
   GOPATH: c:\gopath
 
-stack: go 1.13
+stack: go 1.15
 
 before_test:
   - choco install make

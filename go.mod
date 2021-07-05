@@ -1,6 +1,6 @@
 module github.com/code-ready/admin-helper
 
-go 1.14
+go 1.15
 
 require (
 	github.com/Microsoft/go-winio v0.5.0
