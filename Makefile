@@ -6,6 +6,7 @@ GOPATH ?= $(shell go env GOPATH)
 
 BINARY_NAME := crc-admin-helper
 RELEASE_DIR ?= release
+GOLANGCI_LINT_VERSION = v1.41.1
 
 LDFLAGS := -X github.com/code-ready/admin-helper/pkg/constants.Version=$(VERSION) -extldflags='-static' -s -w $(GO_LDFLAGS)
 
@@ -26,6 +27,12 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -fr release
 	rm -fr crc-admin-helper.spec
+
+.PHONY: golangci-lint
+golangci-lint:
+	@if $(GOPATH)/bin/golangci-lint version 2>&1 | grep -vq $(GOLANGCI_LINT_VERSION); then\
+		pushd /tmp && GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION) && popd; \
+	fi
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
@@ -52,8 +59,8 @@ build:
 	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 .PHONY: lint
-lint:
-	golangci-lint run
+lint: golangci-lint
+	$(GOPATH)/bin/golangci-lint run
 
 .PHONY: test
 test:
