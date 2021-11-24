@@ -43,6 +43,14 @@ func defaultFilter(s string) bool {
 	return clusterRegexp.MatchString(s) || appRegexp.MatchString(s)
 }
 
+func Add(ip string, hosts []string) error {
+	h, err := New()
+	if err != nil {
+		return err
+	}
+	return h.Add(ip, hosts)
+}
+
 func (h *Hosts) Add(ip string, hosts []string) error {
 	if err := h.verifyHosts(hosts); err != nil {
 		return err
@@ -75,6 +83,14 @@ func (h *Hosts) Add(ip string, hosts []string) error {
 	return h.File.Flush()
 }
 
+func Remove(hosts []string) error {
+	h, err := New()
+	if err != nil {
+		return err
+	}
+	return h.Remove(hosts)
+}
+
 func (h *Hosts) Remove(hosts []string) error {
 	if err := h.verifyHosts(hosts); err != nil {
 		return err
@@ -100,6 +116,14 @@ func (h *Hosts) Remove(hosts []string) error {
 		}
 	}
 	return h.File.Flush()
+}
+
+func Clean(rawSuffixes []string) error {
+	h, err := New()
+	if err != nil {
+		return err
+	}
+	return h.Clean(rawSuffixes)
 }
 
 func (h *Hosts) Clean(rawSuffixes []string) error {

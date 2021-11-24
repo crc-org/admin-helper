@@ -10,7 +10,7 @@ import (
 	"github.com/code-ready/admin-helper/pkg/types"
 )
 
-func Mux(hosts *hosts.Hosts) http.Handler {
+func Mux() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprint(w, constants.Version)
