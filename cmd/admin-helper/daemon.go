@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/code-ready/admin-helper/pkg/api"
-	"github.com/code-ready/admin-helper/pkg/hosts"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
 )
@@ -80,12 +79,7 @@ func (p *program) Start(s service.Service) error {
 			_ = logger.Error(err)
 			return
 		}
-		hosts, err := hosts.New()
-		if err != nil {
-			_ = logger.Error(err)
-			return
-		}
-		if err := http.Serve(ln, api.Mux(hosts)); err != nil {
+		if err := http.Serve(ln, api.Mux()); err != nil {
 			_ = logger.Error(err)
 			return
 		}
