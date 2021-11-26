@@ -29,7 +29,7 @@ type Hosts struct {
 }
 
 func init() {
-	// goodhosts unconditionnally uses this environment variable
+	// goodhosts unconditionally uses this environment variable
 	// as an override for the hosts file to use. We don't want admin-helper
 	// to modify arbitrary file, so we have to unset it before calling into
 	// goodhosts.
