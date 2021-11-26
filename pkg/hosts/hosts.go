@@ -2,6 +2,7 @@ package hosts
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"runtime"
 	"sort"
@@ -25,6 +26,14 @@ var (
 type Hosts struct {
 	File       *hostsfile.Hosts
 	HostFilter func(string) bool
+}
+
+func init() {
+	// goodhosts unconditionnally uses this environment variable
+	// as an override for the hosts file to use. We don't want admin-helper
+	// to modify arbitrary file, so we have to unset it before calling into
+	// goodhosts.
+	os.Unsetenv("HOSTS_PATH")
 }
 
 func New() (*Hosts, error) {
