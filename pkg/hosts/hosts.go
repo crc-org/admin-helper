@@ -43,7 +43,7 @@ func New() (*Hosts, error) {
 	}
 
 	return &Hosts{
-		File:       &file,
+		File:       file,
 		HostFilter: defaultFilter,
 	}, nil
 }
