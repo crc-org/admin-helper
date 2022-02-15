@@ -1,7 +1,7 @@
 # https://github.com/code-ready/admin-helper
 %global goipath         github.com/code-ready/admin-helper
 %global goname          crc-admin-helper
-Version:                0.0.2
+Version:                0.0.9
 
 %gometa
 
@@ -75,5 +75,8 @@ go test ./...
 #gopkgfiles
 
 %changelog
+* Mon Jan 31 2022 Christophe Fergeau <cfergeau@redhat.com> - 0.0.9-1
+- Update to admin-helper 0.0.9
+
 * Wed Feb 03 2021 Christophe Fergeau <cfergeau@redhat.com> - 0.0.2-1
 - Initial import in Fedora
