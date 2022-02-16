@@ -1,6 +1,7 @@
 # https://github.com/code-ready/admin-helper
 %global goipath         github.com/code-ready/admin-helper
-Version:                0.0.2
+%global goname          crc-admin-helper
+Version:                0.0.9
 
 %gometa
 
@@ -51,12 +52,12 @@ make VERSION=%{version} GO_LDFLAGS="-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr
 %install
 # with fedora macros: gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/admin-helper %{buildroot}%{_bindir}/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/crc-admin-helper %{buildroot}%{_bindir}/
 
 install -d %{buildroot}%{_datadir}/%{name}-redistributable/{linux,macos,windows}
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/linux/
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/windows-amd64/admin-helper.exe %{buildroot}%{_datadir}/%{name}-redistributable/windows/
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-amd64/admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/linux/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/windows-amd64/crc-admin-helper.exe %{buildroot}%{_datadir}/%{name}-redistributable/windows/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
 
 %check
 # with fedora macros: gocheck
@@ -74,5 +75,8 @@ go test ./...
 #gopkgfiles
 
 %changelog
+* Mon Jan 31 2022 Christophe Fergeau <cfergeau@redhat.com> - 0.0.9-1
+- Update to admin-helper 0.0.9
+
 * Wed Feb 03 2021 Christophe Fergeau <cfergeau@redhat.com> - 0.0.2-1
 - Initial import in Fedora
