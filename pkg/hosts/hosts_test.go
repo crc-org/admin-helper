@@ -89,7 +89,7 @@ func TestSuffixFilter(t *testing.T) {
 	file, err := hostsfile.NewCustomHosts(hostsFile)
 	assert.NoError(t, err)
 	host := Hosts{
-		File:       &file,
+		File:       file,
 		HostFilter: defaultFilter,
 	}
 
@@ -107,7 +107,7 @@ func hosts(t *testing.T, hostsFile string) Hosts {
 	file, err := hostsfile.NewCustomHosts(hostsFile)
 	assert.NoError(t, err)
 	return Hosts{
-		File: &file,
+		File: file,
 		HostFilter: func(s string) bool {
 			return true
 		},

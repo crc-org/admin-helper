@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"runtime"
 	"sort"
 	"strings"
 
@@ -43,21 +42,13 @@ func New() (*Hosts, error) {
 	}
 
 	return &Hosts{
-		File:       &file,
+		File:       file,
 		HostFilter: defaultFilter,
 	}, nil
 }
 
 func defaultFilter(s string) bool {
 	return clusterRegexp.MatchString(s) || appRegexp.MatchString(s)
-}
-
-func Add(ip string, hosts []string) error {
-	h, err := New()
-	if err != nil {
-		return err
-	}
-	return h.Add(ip, hosts)
 }
 
 func (h *Hosts) Add(ip string, hosts []string) error {
@@ -84,20 +75,7 @@ func (h *Hosts) Add(ip string, hosts []string) error {
 	if err := h.File.Add(ip, hostEntries...); err != nil {
 		return err
 	}
-	// Only execute clean in case of windows to avoid more than
-	// 9 domain entry in a single line
-	if runtime.GOOS == "windows" {
-		h.File.Clean()
-	}
 	return h.File.Flush()
-}
-
-func Remove(hosts []string) error {
-	h, err := New()
-	if err != nil {
-		return err
-	}
-	return h.Remove(hosts)
 }
 
 func (h *Hosts) Remove(hosts []string) error {
@@ -125,14 +103,6 @@ func (h *Hosts) Remove(hosts []string) error {
 		}
 	}
 	return h.File.Flush()
-}
-
-func Clean(rawSuffixes []string) error {
-	h, err := New()
-	if err != nil {
-		return err
-	}
-	return h.Clean(rawSuffixes)
 }
 
 func (h *Hosts) Clean(rawSuffixes []string) error {

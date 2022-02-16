@@ -11,7 +11,7 @@ import (
 )
 
 func TestMux(t *testing.T) {
-	ts := httptest.NewServer(Mux())
+	ts := httptest.NewServer(Mux(nil))
 	defer ts.Close()
 
 	client := client.New(http.DefaultClient, ts.URL)
