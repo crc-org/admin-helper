@@ -58,6 +58,7 @@ install -d %{buildroot}%{_datadir}/%{name}-redistributable/{linux,macos,windows}
 install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/linux/
 install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/windows-amd64/crc-admin-helper.exe %{buildroot}%{_datadir}/%{name}-redistributable/windows/
 install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-arm64/crc-admin-helper-arm64 %{buildroot}%{_datadir}/%{name}-redistributable/macos/
 
 %check
 # with fedora macros: gocheck
@@ -77,6 +78,10 @@ go test ./...
 %changelog
 * Tue May 17 2022 Christophe Fergeau <cfergeau@redhat.com> - 0.0.11-1
 - Update to admin-helper 0.0.11
+
+* Tue May 31 2022 Anjan Nath <kaludios@gmail.com> - 0.0.11-1
+- Update to admin-helper 0.0.11
+- install macOS arm64 builds
 
 * Mon Jan 31 2022 Christophe Fergeau <cfergeau@redhat.com> - 0.0.9-1
 - Update to admin-helper 0.0.9
