@@ -47,7 +47,7 @@ $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 .PHONY: cross ## Cross compiles all binaries
-cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
+cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME)-arm64 $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
 
 .PHONY: release
 release: clean lint test cross
