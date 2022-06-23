@@ -1,5 +1,5 @@
 # Go and compilation related variables
-VERSION ?= $(shell git describe --tags --dirty)
+VERSION ?= $(shell git describe --tags --dirty | tr -d v)
 BUILD_DIR ?= out
 
 GOPATH ?= $(shell go env GOPATH)
