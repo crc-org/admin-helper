@@ -47,7 +47,7 @@ ln -fs "$(pwd)" "%{gobuilddir}/src/%{goipath}"
 
 %build
 export GOFLAGS="-mod=vendor"
-make VERSION=%{version} GO_LDFLAGS="-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" GO_BUILDFLAGS="-a -v -x" cross
+make VERSION=%{version} GO_LDFLAGS="-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" GO_BUILDFLAGS="-a -v -x" cross macos-universal
 
 %install
 # with fedora macros: gopkginstall
@@ -57,8 +57,7 @@ install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/crc-admin-helpe
 install -d %{buildroot}%{_datadir}/%{name}-redistributable/{linux,macos,windows}
 install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/linux-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/linux/
 install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/windows-amd64/crc-admin-helper.exe %{buildroot}%{_datadir}/%{name}-redistributable/windows/
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-amd64/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
-install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-arm64/crc-admin-helper-arm64 %{buildroot}%{_datadir}/%{name}-redistributable/macos/
+install -m 0755 -vp %{gobuilddir}/src/%{goipath}/out/macos-universal/crc-admin-helper %{buildroot}%{_datadir}/%{name}-redistributable/macos/
 
 %check
 # with fedora macros: gocheck
