@@ -32,7 +32,7 @@ clean:
 .PHONY: golangci-lint
 golangci-lint:
 	@if $(GOPATH)/bin/golangci-lint version 2>&1 | grep -vq $(GOLANGCI_LINT_VERSION); then\
-		GOBIN=$(TOOLS_BINDIR) go install -mod=readonly github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION); \
+		cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/golangci/golangci-lint/cmd/golangci-lint; \
 	fi
 
 # Needed to build macOS universal binary -- https://github.com/randall77/makefat/
