@@ -36,8 +36,8 @@ golangci-lint:
 	fi
 
 # Needed to build macOS universal binary -- https://github.com/randall77/makefat/
-$(TOOLS_BINDIR)/makefat:
-	GOBIN=$(TOOLS_BINDIR) go install -mod=mod github.com/randall77/makefat@latest
+ $(TOOLS_BINDIR)/makefat:
+	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/randall77/makefat
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
