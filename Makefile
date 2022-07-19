@@ -29,14 +29,11 @@ clean:
 	rm -fr release
 	rm -fr crc-admin-helper.spec
 
-.PHONY: golangci-lint
-golangci-lint:
-	@if $(GOPATH)/bin/golangci-lint version 2>&1 | grep -vq $(GOLANGCI_LINT_VERSION); then\
-		cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/golangci/golangci-lint/cmd/golangci-lint; \
-	fi
+$(TOOLS_BINDIR)/golangci-lint: tools/go.mod
+	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/golangci/golangci-lint/cmd/golangci-lint; \
 
 # Needed to build macOS universal binary -- https://github.com/randall77/makefat/
- $(TOOLS_BINDIR)/makefat:
+ $(TOOLS_BINDIR)/makefat: go.mod
 	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/randall77/makefat
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
@@ -74,7 +71,7 @@ build:
 	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 .PHONY: lint
-lint: golangci-lint
+lint: $(TOOLS_BINDIR)/golangci-lint
 	$(TOOLS_BINDIR)/golangci-lint run
 
 .PHONY: test
