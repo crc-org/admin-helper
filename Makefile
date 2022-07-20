@@ -1,7 +1,9 @@
 # Go and compilation related variables
 VERSION ?= $(shell git describe --tags --dirty | tr -d v)
 BUILD_DIR ?= out
-TOOLS_BINDIR = $(realpath tools/bin)
+
+TOOLS_DIR := tools
+include tools/tools.mk
 
 GOPATH ?= $(shell go env GOPATH)
 
@@ -28,16 +30,6 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -fr release
 	rm -fr crc-admin-helper.spec
-
-$(TOOLS_BINDIR)/golangci-lint: tools/go.mod
-	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/golangci/golangci-lint/cmd/golangci-lint; \
-
-# Needed to build macOS universal binary -- https://github.com/randall77/makefat/
- $(TOOLS_BINDIR)/makefat: go.mod
-	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/randall77/makefat
-
-$(TOOLS_BINDIR)/gomod2rpmdeps: tools/go.mod
-	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/cfergeau/gomod2rpmdeps/cmd/gomod2rpmdeps
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
