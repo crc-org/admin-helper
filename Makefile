@@ -36,6 +36,9 @@ $(TOOLS_BINDIR)/golangci-lint: tools/go.mod
  $(TOOLS_BINDIR)/makefat: go.mod
 	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/randall77/makefat
 
+$(TOOLS_BINDIR)/gomod2rpmdeps: tools/go.mod
+	cd tools && GOBIN=$(TOOLS_BINDIR) go install github.com/cfergeau/gomod2rpmdeps/cmd/gomod2rpmdeps
+
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
@@ -80,9 +83,6 @@ test:
 
 .PHONY: spec
 spec: crc-admin-helper.spec
-
-$(GOPATH)/bin/gomod2rpmdeps:
-	pushd /tmp && GO111MODULE=on go get github.com/cfergeau/gomod2rpmdeps/cmd/gomod2rpmdeps && popd
 
 %.spec: %.spec.in $(GOPATH)/bin/gomod2rpmdeps
 	@$(GOPATH)/bin/gomod2rpmdeps | sed -e '/__BUNDLED_REQUIRES__/r /dev/stdin' \
