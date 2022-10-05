@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/code-ready/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/hosts"
 	"github.com/spf13/cobra"
 )
 

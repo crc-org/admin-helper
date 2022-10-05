@@ -1,6 +1,6 @@
 build: off
 
-clone_folder: c:\gopath\src\github.com\code-ready\admin-helper
+clone_folder: c:\gopath\src\github.com\crc-org\admin-helper
 
 environment:
   GOPATH: c:\gopath

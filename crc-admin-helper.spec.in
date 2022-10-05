@@ -1,5 +1,5 @@
-# https://github.com/code-ready/admin-helper
-%global goipath         github.com/code-ready/admin-helper
+# https://github.com/crc-org/admin-helper
+%global goipath         github.com/crc-org/admin-helper
 %global goname          crc-admin-helper
 Version:                0.0.11
 

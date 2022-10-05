@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/code-ready/admin-helper/pkg/constants"
-	"github.com/code-ready/admin-helper/pkg/hosts"
-	"github.com/code-ready/admin-helper/pkg/types"
+	"github.com/crc-org/admin-helper/pkg/constants"
+	"github.com/crc-org/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/types"
 )
 
 func Mux(hosts *hosts.Hosts) http.Handler {

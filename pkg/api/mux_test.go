@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/code-ready/admin-helper/pkg/client"
-	"github.com/code-ready/admin-helper/pkg/constants"
+	"github.com/crc-org/admin-helper/pkg/client"
+	"github.com/crc-org/admin-helper/pkg/constants"
 	"github.com/stretchr/testify/assert"
 )
 

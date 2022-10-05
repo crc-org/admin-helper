@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/code-ready/admin-helper/pkg/api"
-	"github.com/code-ready/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/api"
+	"github.com/crc-org/admin-helper/pkg/hosts"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
 )

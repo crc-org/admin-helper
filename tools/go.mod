@@ -1,4 +1,4 @@
-module github.com/code-ready/crc/tools
+module github.com/crc-org/admin-helper
 
 go 1.17
 
