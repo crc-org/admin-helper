@@ -5,7 +5,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/code-ready/admin-helper/pkg/constants"
+	"github.com/crc-org/admin-helper/pkg/constants"
 	"github.com/spf13/cobra"
 )
 
