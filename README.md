@@ -1,6 +1,6 @@
-# admin-helper, all admin commands required by [CodeReady Containers](https://github.com/lextoumbourou/goodhosts)
+# admin-helper, all admin commands required by [CRC](https://github.com/crc-org/crc)
 
-This project gathers all the interactions with the hosts that need to perform CodeReady Containers as administrator.
+This project gathers all the interactions with the hosts that CRC needs to perform as administrator.
 
 ## Usage
 
