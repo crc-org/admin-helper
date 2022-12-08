@@ -12,7 +12,7 @@ Version:                0.0.11
 %global _enable_debug_package 0
 
 %global common_description %{expand:
-CodeReady Container's helper with administrative privileges}
+CRC's helper with administrative privileges}
 
 
 %global golicenses    LICENSE
@@ -20,7 +20,7 @@ CodeReady Container's helper with administrative privileges}
 
 Name:           %{goname}
 Release:        1%{?dist}
-Summary:        CodeReady Container's helper with administrative privileges
+Summary:        CRC's helper with administrative privileges
 License:        MIT
 URL:            %{gourl}
 Source0:        %{gosource}
