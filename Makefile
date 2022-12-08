@@ -2,6 +2,10 @@
 VERSION ?= $(shell git describe --tags --dirty | tr -d v)
 BUILD_DIR ?= out
 
+# Add default target
+.PHONY: all
+all: build
+
 TOOLS_DIR := tools
 include tools/tools.mk
 
@@ -12,10 +16,6 @@ RELEASE_DIR ?= release
 GOLANGCI_LINT_VERSION = v1.47.0
 
 LDFLAGS := -X github.com/crc-org/admin-helper/pkg/constants.Version=$(VERSION) -extldflags='-static' -s -w $(GO_LDFLAGS)
-
-# Add default target
-.PHONY: all
-all: build
 
 .PHONY: vendor
 vendor:
