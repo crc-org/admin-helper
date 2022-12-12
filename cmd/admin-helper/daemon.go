@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/crc-org/admin-helper/pkg/api"
 	"github.com/crc-org/admin-helper/pkg/hosts"
@@ -85,7 +86,12 @@ func (p *program) Start(s service.Service) error {
 			_ = logger.Error(err)
 			return
 		}
-		if err := http.Serve(ln, api.Mux(hosts)); err != nil {
+		s := &http.Server{
+			Handler:      api.Mux(hosts),
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		}
+		if err := s.Serve(ln); err != nil {
 			_ = logger.Error(err)
 			return
 		}
