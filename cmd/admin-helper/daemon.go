@@ -13,7 +13,7 @@ import (
 var InstallDaemon = &cobra.Command{
 	Use:   "install-daemon",
 	Short: "Install the daemon",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		svc, err := svc()
 		if err != nil {
 			return err
@@ -28,7 +28,7 @@ var InstallDaemon = &cobra.Command{
 var UninstallDaemon = &cobra.Command{
 	Use:   "uninstall-daemon",
 	Short: "Uninstall the daemon",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		svc, err := svc()
 		if err != nil {
 			return err
