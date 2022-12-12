@@ -58,9 +58,16 @@ func daemon() error {
 }
 
 func svc() (service.Service, error) {
+	/*
+	 * The following struct fields are used to set the service's Name,
+	 * Display name, description and Arguments only when service  gets
+	 * installed via the `admin-helper install-daemon` command for CRC
+	 * in production these values are not used as the MSI installs the
+	 * service
+	 */
 	svcConfig := &service.Config{
-		Name:        "CodeReadyContainersAdminHelper",
-		DisplayName: "CodeReadyContainers Admin Helper",
+		Name:        "crcAdminHelper",
+		DisplayName: "CRC Admin Helper",
 		Description: "Perform administrative tasks for the user",
 		Arguments:   []string{"daemon"},
 	}
