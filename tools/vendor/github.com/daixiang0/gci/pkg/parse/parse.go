@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const C = "\"C\""
+
 type GciImports struct {
 	// original index of import group, include doc, name, path and comment
 	Start, End int
@@ -20,6 +22,10 @@ func (l ImportList) Len() int {
 }
 
 func (l ImportList) Less(i, j int) bool {
+	if strings.Compare(l[i].Path, l[j].Path) == 0 {
+		return strings.Compare(l[i].Name, l[j].Name) < 0
+	}
+
 	return strings.Compare(l[i].Path, l[j].Path) < 0
 }
 
@@ -64,22 +70,34 @@ func getImports(imp *ast.ImportSpec) (start, end int, name string) {
 	return
 }
 
-func ParseFile(src []byte) (ImportList, int, int, int, error) {
-	parserMode := parser.Mode(0)
-	parserMode |= parser.ParseComments
+func ParseFile(src []byte, filename string) (ImportList, int, int, error) {
 	fileSet := token.NewFileSet()
-	f, err := parser.ParseFile(fileSet, "", src, parserMode)
+	f, err := parser.ParseFile(fileSet, filename, src, parser.ParseComments)
 	if err != nil {
-		return nil, 0, 0, 0, err
+		return nil, 0, 0, err
 	}
 
 	if len(f.Imports) == 0 {
-		return nil, 0, 0, 0, NoImportError{}
+		return nil, 0, 0, NoImportError{}
 	}
 
+	var headEnd, tailStart int
+
 	var data ImportList
-	for _, imp := range f.Imports {
+	for i, imp := range f.Imports {
+		if imp.Path.Value == C {
+			continue
+		}
+
 		start, end, name := getImports(imp)
+
+		if headEnd == 0 {
+			headEnd = start
+		}
+		if i == len(f.Imports)-1 {
+			tailStart = end
+		}
+
 		data = append(data, &GciImports{
 			Start: start,
 			End:   end,
@@ -88,15 +106,11 @@ func ParseFile(src []byte) (ImportList, int, int, int, error) {
 		})
 	}
 
-	headEnd, _, _ := getImports(f.Imports[0])
-	_, tailStart, _ := getImports(f.Imports[len(f.Imports)-1])
-	tailEnd := f.Decls[len(f.Decls)-1].End()
-
 	sort.Sort(data)
-	return data, headEnd, tailStart, int(tailEnd), nil
+	return data, headEnd, tailStart, nil
 }
 
-// isGenerated reports whether the source file is generated code.
+// IsGeneratedFileByComment reports whether the source file is generated code.
 // Using a bit laxer rules than https://golang.org/s/generatedcode to
 // match more generated code.
 // Taken from https://github.com/golangci/golangci-lint.
