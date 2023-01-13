@@ -57,7 +57,7 @@ func Mux(hosts *hosts.Hosts) http.Handler {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if err := hosts.Clean(req.Domains); err != nil {
+		if err := hosts.Clean(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
