@@ -24,5 +24,5 @@ func clean(args []string) error {
 	if err != nil {
 		return err
 	}
-	return hosts.Clean(args)
+	return hosts.Clean()
 }
