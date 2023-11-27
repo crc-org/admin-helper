@@ -1,6 +1,6 @@
 module github.com/crc-org/admin-helper
 
-go 1.17
+go 1.20
 
 require (
 	github.com/Microsoft/go-winio v0.6.0
