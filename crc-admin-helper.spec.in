@@ -1,7 +1,7 @@
 # https://github.com/crc-org/admin-helper
 %global goipath         github.com/crc-org/admin-helper
 %global goname          crc-admin-helper
-Version:                0.0.12
+Version:                0.5.0
 
 %gometa
 
@@ -75,6 +75,9 @@ go test ./...
 #gopkgfiles
 
 %changelog
+* Wed Dec 01 2023 Christophe Fergeau <cfergeau@redhat.com> - 0.5.0-1
+- Update to admin-helper 0.5.0
+
 * Mon Dec 12 2022 Christophe Fergeau <cfergeau@redhat.com> - 0.0.12-1
 - Update to admin-helper 0.0.12
 
