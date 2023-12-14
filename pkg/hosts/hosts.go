@@ -173,17 +173,6 @@ func (h *Hosts) Remove(hosts []string) error {
 		return err
 	}
 
-	uniqueHosts := map[string]bool{}
-	for i := 0; i < len(hosts); i++ {
-		uniqueHosts[hosts[i]] = true
-	}
-
-	var hostEntries = make(map[string]struct{}, len(uniqueHosts))
-
-	for key := range uniqueHosts {
-		hostEntries[key] = struct{}{}
-	}
-
 	start, end := h.findCrcSection()
 
 	h.Lock()
@@ -196,11 +185,13 @@ func (h *Hosts) Remove(hosts []string) error {
 				continue
 			}
 
-			for hostIdx, hostname := range line.Hostnames {
-				if _, ok := hostEntries[hostname]; ok {
-					h.removeHostFromLine(line, hostIdx, i)
+			for _, hostToRemove := range hosts {
+				for hostIdx, hostname := range line.Hostnames {
+					if hostname == hostToRemove {
+						h.removeHostFromLine(line, hostIdx, i)
+						break
+					}
 				}
-
 			}
 		}
 	} else {
