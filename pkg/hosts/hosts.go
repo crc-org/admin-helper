@@ -173,14 +173,8 @@ func (h *Hosts) Remove(hosts []string) error {
 		return err
 	}
 
-	uniqueHosts := map[string]bool{}
-	for i := 0; i < len(hosts); i++ {
-		uniqueHosts[hosts[i]] = true
-	}
-
-	var hostEntries = make(map[string]struct{}, len(uniqueHosts))
-
-	for key := range uniqueHosts {
+	var hostEntries = make(map[string]struct{})
+	for _, key := range hosts {
 		hostEntries[key] = struct{}{}
 	}
 
