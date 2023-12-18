@@ -22,11 +22,7 @@ const (
 )
 
 func TestAdd(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 entry1`), 0600))
 
 	host := hosts(t, hostsFile)
@@ -40,11 +36,7 @@ func TestAdd(t *testing.T) {
 }
 
 func TestAddMoreThen9Hosts(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
 	host := hosts(t, hostsFile)
@@ -57,11 +49,7 @@ func TestAddMoreThen9Hosts(t *testing.T) {
 }
 
 func TestAddMoreThan18Hosts(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
 	host := hosts(t, hostsFile)
@@ -75,11 +63,7 @@ func TestAddMoreThan18Hosts(t *testing.T) {
 }
 
 func TestAddMoreThen9HostsInMultipleLines(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1 entry10 entry2 entry3 entry4 entry5 entry6 entry7", "127.0.0.1        entry11 entry12 entry13 entry14 entry15 entry16 entry17 entry18")+eol()), 0600))
 
 	host := hosts(t, hostsFile)
@@ -92,11 +76,7 @@ func TestAddMoreThen9HostsInMultipleLines(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
 	host := hosts(t, hostsFile)
@@ -110,11 +90,7 @@ func TestRemove(t *testing.T) {
 }
 
 func TestClean(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1 entry1.suffix1 entry2.suffix2")), 0600))
 
 	host := hosts(t, hostsFile)
@@ -127,11 +103,7 @@ func TestClean(t *testing.T) {
 }
 
 func TestCleanWithoutCrcSection(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
 	host := hosts(t, hostsFile)
@@ -144,11 +116,7 @@ func TestCleanWithoutCrcSection(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 entry1.suffix1 entry2.suffix2`), 0600))
 
 	host := hosts(t, hostsFile)
@@ -159,11 +127,7 @@ func TestContains(t *testing.T) {
 }
 
 func TestSuffixFilter(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 localhost localhost.localdomain`), 0600))
 
 	config, _ := libhosty.NewHostsFileConfig(hostsFile)
@@ -184,11 +148,7 @@ func TestSuffixFilter(t *testing.T) {
 }
 
 func TestAddMoreThan9HostsWithFullLine(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1  entry2 entry3 entry4 entry5 entry6 entry7 entry8 entry9")+eol()), 0600))
 
 	host := hosts(t, hostsFile)
@@ -201,11 +161,7 @@ func TestAddMoreThan9HostsWithFullLine(t *testing.T) {
 }
 
 func TestAddMoreThan9HostsWithOverfullLine(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1  entry2 entry3 entry4 entry5 entry6 entry7 entry8 entry9 entry10")+eol()), 0600))
 
 	host := hosts(t, hostsFile)
@@ -218,11 +174,7 @@ func TestAddMoreThan9HostsWithOverfullLine(t *testing.T) {
 }
 
 func TestRemoveOnOldHostFile(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+"127.0.0.1 entry1 entry2"), 0600))
 
 	host := hosts(t, hostsFile)
@@ -235,11 +187,7 @@ func TestRemoveOnOldHostFile(t *testing.T) {
 }
 
 func TestRemoveMultipleForwardSameLine(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   entry1 entry2")), 0600))
 	host := hosts(t, hostsFile)
 
@@ -251,11 +199,7 @@ func TestRemoveMultipleForwardSameLine(t *testing.T) {
 }
 
 func TestRemoveMultipleBackwardsSameLine(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   entry1 entry2")), 0600))
 	host := hosts(t, hostsFile)
 
@@ -267,11 +211,7 @@ func TestRemoveMultipleBackwardsSameLine(t *testing.T) {
 }
 
 func TestRemoveMultipleLines(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   api.crc.testing", "192.168.130.11    oauth-openshift.apps-crc.testing")), 0600))
 	host := hosts(t, hostsFile)
 
@@ -283,11 +223,7 @@ func TestRemoveMultipleLines(t *testing.T) {
 }
 
 func TestRemoveMultipleNoCrcSection(t *testing.T) {
-	dir, err := os.MkdirTemp("", "hosts")
-	assert.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	hostsFile := filepath.Join(dir, "hosts")
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte("192.168.130.11   entry1 entry2"+eol()+"192.168.130.11   entry3 entry4"), 0600))
 	host := hosts(t, hostsFile)
 
