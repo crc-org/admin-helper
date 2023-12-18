@@ -196,7 +196,8 @@ func (h *Hosts) Remove(hosts []string) error {
 				continue
 			}
 
-			for hostIdx, hostname := range line.Hostnames {
+			for hostIdx := len(line.Hostnames) - 1; hostIdx >= 0; hostIdx-- {
+				hostname := line.Hostnames[hostIdx]
 				if _, ok := hostEntries[hostname]; ok {
 					h.removeHostFromLine(line, hostIdx, i)
 				}
