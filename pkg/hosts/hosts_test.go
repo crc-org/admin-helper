@@ -234,16 +234,16 @@ func TestRemoveOnOldHostFile(t *testing.T) {
 	assert.Equal(t, hostsTemplate, string(content))
 }
 
-func TestDeleteSliceBoundErrorOnRemove(t *testing.T) {
+func TestRemoveMultipleForwardSameLine(t *testing.T) {
 	dir, err := os.MkdirTemp("", "hosts")
 	assert.NoError(t, err)
 	defer os.RemoveAll(dir)
 
 	hostsFile := filepath.Join(dir, "hosts")
-	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   api.crc.testing canary-openshift-ingress-canary.apps-crc.testing console-openshift-console.apps-crc.testing default-route-openshift-image-registry.apps-crc.testing downloads-openshift-console.apps-crc.testing oauth-openshift.apps-crc.testing")), 0600))
+	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   entry1 entry2")), 0600))
 	host := hosts(t, hostsFile)
 
-	assert.NoError(t, host.Remove([]string{"api.crc.testing", "oauth-openshift.apps-crc.testing", "console-openshift-console.apps-crc.testing", "downloads-openshift-console.apps-crc.testing", "canary-openshift-ingress-canary.apps-crc.testing", "default-route-openshift-image-registry.apps-crc.testing"}))
+	assert.NoError(t, host.Remove([]string{"entry1", "entry2"}))
 
 	content, err := os.ReadFile(hostsFile)
 	assert.NoError(t, err)
