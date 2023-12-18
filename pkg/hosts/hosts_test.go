@@ -282,6 +282,22 @@ func TestRemoveMultipleLines(t *testing.T) {
 	assert.Equal(t, hostsTemplate+eol()+crcSection(), string(content))
 }
 
+func TestRemoveMultipleNoCrcSection(t *testing.T) {
+	dir, err := os.MkdirTemp("", "hosts")
+	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	hostsFile := filepath.Join(dir, "hosts")
+	assert.NoError(t, os.WriteFile(hostsFile, []byte("192.168.130.11   entry1 entry2"+eol()+"192.168.130.11   entry3 entry4"), 0600))
+	host := hosts(t, hostsFile)
+
+	assert.NoError(t, host.Remove([]string{"entry1", "entry2", "entry3", "entry4"}))
+
+	content, err := os.ReadFile(hostsFile)
+	assert.NoError(t, err)
+	assert.Equal(t, "", string(content))
+}
+
 func hosts(t *testing.T, hostsFile string) Hosts {
 	config, _ := libhosty.NewHostsFileConfig(hostsFile)
 	file, err := libhosty.InitWithConfig(config)
