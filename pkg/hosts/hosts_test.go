@@ -244,6 +244,10 @@ func TestDeleteSliceBoundErrorOnRemove(t *testing.T) {
 	host := hosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"api.crc.testing", "oauth-openshift.apps-crc.testing", "console-openshift-console.apps-crc.testing", "downloads-openshift-console.apps-crc.testing", "canary-openshift-ingress-canary.apps-crc.testing", "default-route-openshift-image-registry.apps-crc.testing"}))
+
+	content, err := os.ReadFile(hostsFile)
+	assert.NoError(t, err)
+	assert.Equal(t, hostsTemplate+eol()+crcSection(), string(content))
 }
 
 func hosts(t *testing.T, hostsFile string) Hosts {
@@ -266,5 +270,9 @@ func eol() string {
 }
 
 func crcSection(lines ...string) string {
-	return fmt.Sprintf("# Added by CRC"+eol()+"%s"+eol()+"# End of CRC section", strings.Join(lines, eol()))
+	var content = ""
+	if len(lines) != 0 {
+		content = strings.Join(lines, eol()) + eol()
+	}
+	return fmt.Sprintf("# Added by CRC"+eol()+"%s"+"# End of CRC section", content)
 }
