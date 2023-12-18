@@ -190,7 +190,7 @@ func (h *Hosts) Remove(hosts []string) error {
 	defer h.Unlock()
 	// delete from CRC section
 	if start > 0 && end > 0 {
-		for i := start; i < end; i++ {
+		for i := end - 1; i >= start; i-- {
 			line := h.File.GetHostsFileLineByRow(i)
 			if line.Type == libhosty.LineTypeComment {
 				continue

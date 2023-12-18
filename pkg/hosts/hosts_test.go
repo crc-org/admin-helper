@@ -266,6 +266,22 @@ func TestRemoveMultipleBackwardsSameLine(t *testing.T) {
 	assert.Equal(t, hostsTemplate+eol()+crcSection(), string(content))
 }
 
+func TestRemoveMultipleLines(t *testing.T) {
+	dir, err := os.MkdirTemp("", "hosts")
+	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	hostsFile := filepath.Join(dir, "hosts")
+	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   api.crc.testing", "192.168.130.11    oauth-openshift.apps-crc.testing")), 0600))
+	host := hosts(t, hostsFile)
+
+	assert.NoError(t, host.Remove([]string{"api.crc.testing", "oauth-openshift.apps-crc.testing"}))
+
+	content, err := os.ReadFile(hostsFile)
+	assert.NoError(t, err)
+	assert.Equal(t, hostsTemplate+eol()+crcSection(), string(content))
+}
+
 func hosts(t *testing.T, hostsFile string) Hosts {
 	config, _ := libhosty.NewHostsFileConfig(hostsFile)
 	file, err := libhosty.InitWithConfig(config)
