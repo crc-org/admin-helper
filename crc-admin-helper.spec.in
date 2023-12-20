@@ -1,7 +1,7 @@
 # https://github.com/crc-org/admin-helper
 %global goipath         github.com/crc-org/admin-helper
 %global goname          crc-admin-helper
-Version:                0.5.1
+Version:                0.5.2
 
 %gometa
 
@@ -75,6 +75,9 @@ go test ./...
 #gopkgfiles
 
 %changelog
+* Fri Dec 20 2023 Anjan Nath <anath@redhat.com> - 0.5.2-1
+- update to admin-helper 0.5.2
+
 * Fri Dec 15 2023 Anjan Nath <anath@redhat.com> - 0.5.1-1
 - update to admin-helper 0.5.1
 
