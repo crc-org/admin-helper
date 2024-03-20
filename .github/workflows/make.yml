@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: make cross
       - name: lint
-        uses: golangci/golangci-lint-action@v3
+        run: make lint
       - name: Tests
         run: make test
       - name: Upload artifats
