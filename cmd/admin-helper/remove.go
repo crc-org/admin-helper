@@ -9,7 +9,7 @@ var Remove = &cobra.Command{
 	Use:     "remove",
 	Aliases: []string{"rm", "r"},
 	Short:   "Remove host(s) if exists",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, args []string) error {
 		return remove(args)
 	},
 }

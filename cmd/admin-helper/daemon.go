@@ -44,7 +44,7 @@ var UninstallDaemon = &cobra.Command{
 var Daemon = &cobra.Command{
 	Use:   "daemon",
 	Short: "Run as a daemon",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		return daemon()
 	},
 }

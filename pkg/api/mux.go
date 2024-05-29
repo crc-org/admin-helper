@@ -12,7 +12,7 @@ import (
 
 func Mux(hosts *hosts.Hosts) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/version", func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = fmt.Fprint(w, constants.Version)
 	})
 	mux.HandleFunc("/add", func(w http.ResponseWriter, r *http.Request) {

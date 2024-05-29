@@ -240,7 +240,7 @@ func hosts(t *testing.T, hostsFile string) Hosts {
 	assert.NoError(t, err)
 	return Hosts{
 		File: file,
-		HostFilter: func(s string) bool {
+		HostFilter: func(_ string) bool {
 			return true
 		},
 	}
