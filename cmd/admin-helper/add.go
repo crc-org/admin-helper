@@ -11,7 +11,7 @@ var Add = &cobra.Command{
 	Use:     "add",
 	Aliases: []string{"a"},
 	Short:   "Add an entry to the hostsfile",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, args []string) error {
 		return add(args)
 	},
 }

@@ -10,7 +10,7 @@ import (
 var Clean = &cobra.Command{
 	Use:   "clean",
 	Short: "Clean all entries added with a particular suffix",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, args []string) error {
 		return clean(args)
 	},
 }

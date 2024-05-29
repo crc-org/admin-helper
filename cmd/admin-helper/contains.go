@@ -11,7 +11,7 @@ var Contains = &cobra.Command{
 	Use:   "contains",
 	Short: "Check if an ip and host are present in hosts file",
 	Args:  cobra.ExactArgs(2),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, args []string) error {
 		return contains(args)
 	},
 }
