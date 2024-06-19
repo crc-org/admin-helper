@@ -40,6 +40,9 @@ $(BUILD_DIR)/macos-arm64/$(BINARY_NAME):
 $(BUILD_DIR)/linux-amd64/$(BINARY_NAME):
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
+$(BUILD_DIR)/linux-arm64/$(BINARY_NAME):
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+
 $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
@@ -48,7 +51,7 @@ $(BUILD_DIR)/macos-universal/$(BINARY_NAME): $(BUILD_DIR)/macos-amd64/$(BINARY_N
 	cd $(BUILD_DIR) && $(TOOLS_BINDIR)/makefat macos-universal/$(BINARY_NAME) macos-amd64/$(BINARY_NAME) macos-arm64/$(BINARY_NAME)
 
 .PHONY: cross ## Cross compiles all binaries
-cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
+cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-arm64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
 
 .PHONY: macos-universal ## Creates macOS universal binary
 macos-universal: lint test $(BUILD_DIR)/macos-universal/$(BINARY_NAME)
@@ -56,7 +59,8 @@ macos-universal: lint test $(BUILD_DIR)/macos-universal/$(BINARY_NAME)
 .PHONY: release
 release: clean lint test cross macos-universal
 	mkdir $(RELEASE_DIR)
-	cp $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-linux
+	cp $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-linux-amd64
+	cp $(BUILD_DIR)/linux-arm64/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-linux-arm64
 	cp $(BUILD_DIR)/macos-universal/$(BINARY_NAME) $(RELEASE_DIR)/$(BINARY_NAME)-darwin
 	cp $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe $(RELEASE_DIR)/$(BINARY_NAME)-windows.exe
 	pushd $(RELEASE_DIR) && sha256sum * > sha256sum.txt && popd
