@@ -3,6 +3,7 @@
 %global goname          crc-admin-helper
 Version:                0.5.3
 
+%global golang_arches x86_64 aarch64
 %gometa
 
 %global gobuilddir %{_builddir}/%{archivename}/_build
@@ -29,7 +30,6 @@ Name:           %{goname}
 Release:        1%{?dist}
 Summary:        CRC's helper with administrative privileges
 License:        MIT
-ExclusiveArch:  x86_64 aarch64
 URL:            %{gourl}
 Source0:        %{gosource}
 
