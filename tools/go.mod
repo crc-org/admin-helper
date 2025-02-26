@@ -1,4 +1,4 @@
-module github.com/crc-org/admin-helper
+module github.com/crc-org/admin-helper/tools
 
 go 1.23.0
 
