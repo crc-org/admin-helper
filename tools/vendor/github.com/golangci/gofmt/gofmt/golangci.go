@@ -8,7 +8,18 @@ import (
 	"go/printer"
 	"go/token"
 	"os"
+	"path/filepath"
+	"sync"
+
+	"github.com/golangci/gofmt/gofmt/internal/diff"
 )
+
+type Options struct {
+	NeedSimplify bool
+	RewriteRules []RewriteRule
+}
+
+var parserModeMu sync.RWMutex
 
 type RewriteRule struct {
 	Pattern     string
@@ -31,7 +42,9 @@ func RunRewrite(filename string, needSimplify bool, rewriteRules []RewriteRule) 
 
 	fset := token.NewFileSet()
 
+	parserModeMu.Lock()
 	initParserMode()
+	parserModeMu.Unlock()
 
 	file, sourceAdj, indentAdj, err := parse(fset, filename, src, false)
 	if err != nil {
@@ -59,12 +72,36 @@ func RunRewrite(filename string, needSimplify bool, rewriteRules []RewriteRule) 
 	}
 
 	// formatting has changed
-	data, err := diffWithReplaceTempFile(src, res, filename)
+	newName := filepath.ToSlash(filename)
+	oldName := newName + ".orig"
+
+	return diff.Diff(oldName, src, newName, res), nil
+}
+
+func Source(filename string, src []byte, opts Options) ([]byte, error) {
+	fset := token.NewFileSet()
+
+	parserModeMu.Lock()
+	initParserMode()
+	parserModeMu.Unlock()
+
+	file, sourceAdj, indentAdj, err := parse(fset, filename, src, false)
 	if err != nil {
-		return nil, fmt.Errorf("error computing diff: %s", err)
+		return nil, err
 	}
 
-	return data, nil
+	file, err = rewriteFileContent(fset, file, opts.RewriteRules)
+	if err != nil {
+		return nil, err
+	}
+
+	ast.SortImports(fset, file)
+
+	if opts.NeedSimplify {
+		simplify(file)
+	}
+
+	return format(fset, file, sourceAdj, indentAdj, src, printer.Config{Mode: printerMode, Tabwidth: tabWidth})
 }
 
 func rewriteFileContent(fset *token.FileSet, file *ast.File, rewriteRules []RewriteRule) (*ast.File, error) {
