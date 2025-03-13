@@ -1,7 +1,7 @@
 # https://github.com/crc-org/admin-helper
 %global goipath         github.com/crc-org/admin-helper
 %global goname          crc-admin-helper
-Version:                0.5.4
+Version:                0.5.5
 
 %global golang_arches x86_64 aarch64
 %gometa
