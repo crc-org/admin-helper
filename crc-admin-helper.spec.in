@@ -55,7 +55,7 @@ ln -fs "$(pwd)" "%{gobuilddir}/src/%{goipath}"
 
 %build
 export GOFLAGS="-mod=vendor"
-make VERSION=%{version} GO_LDFLAGS="-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" GO_BUILDFLAGS="-a -v -x" release
+make VERSION=%{version} GO_LDFLAGS="-B gobuildid" GO_BUILDFLAGS="-a -v -x" release
 
 %install
 # with fedora macros: gopkginstall
