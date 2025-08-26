@@ -7,7 +7,7 @@ require (
 	github.com/areYouLazy/libhosty v1.1.0
 	github.com/kardianos/service v1.2.4
 	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 )
 
 require (
