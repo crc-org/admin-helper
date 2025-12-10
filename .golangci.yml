@@ -2,6 +2,11 @@ version: "2"
 run:
   timeout: 10m
 linters:
+  settings:
+    revive:
+      rules:
+        - name: var-naming
+          disabled: true
   enable:
     - gocritic
     - gosec
