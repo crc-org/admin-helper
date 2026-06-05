@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/crc-org/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -24,5 +25,14 @@ func add(args []string) error {
 	if err != nil {
 		return err
 	}
-	return hosts.Add(args[0], args[1:])
+	err = hosts.Add(args[0], args[1:])
+	logger := logging.GetLogger()
+	logger.LogModification(logging.Modification{
+		Operation: "add",
+		IP:        args[0],
+		Hosts:     args[1:],
+		Caller:    cliCaller(),
+		Error:     err,
+	})
+	return err
 }

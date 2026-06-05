@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/crc-org/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -24,5 +25,12 @@ func clean(args []string) error {
 	if err != nil {
 		return err
 	}
-	return hosts.Clean()
+	err = hosts.Clean()
+	logger := logging.GetLogger()
+	logger.LogModification(logging.Modification{
+		Operation: "clean",
+		Caller:    cliCaller(),
+		Error:     err,
+	})
+	return err
 }

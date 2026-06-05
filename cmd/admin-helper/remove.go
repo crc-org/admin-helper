@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/crc-org/admin-helper/pkg/hosts"
+	"github.com/crc-org/admin-helper/pkg/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -23,5 +24,13 @@ func remove(args []string) error {
 	if err != nil {
 		return err
 	}
-	return hosts.Remove(args)
+	err = hosts.Remove(args)
+	logger := logging.GetLogger()
+	logger.LogModification(logging.Modification{
+		Operation: "remove",
+		Hosts:     args,
+		Caller:    cliCaller(),
+		Error:     err,
+	})
+	return err
 }
