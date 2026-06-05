@@ -15,7 +15,8 @@ BINARY_NAME := crc-admin-helper
 RELEASE_DIR ?= release
 GOLANGCI_LINT_VERSION = v1.54.2
 
-LDFLAGS := -X github.com/crc-org/admin-helper/pkg/constants.Version=$(VERSION) -extldflags='-static' -s -w $(GO_LDFLAGS)
+LDFLAGS := -X github.com/crc-org/admin-helper/pkg/constants.Version=$(VERSION) -s -w $(GO_LDFLAGS)
+LDFLAGS_STATIC := -X github.com/crc-org/admin-helper/pkg/constants.Version=$(VERSION) -extldflags='-static' -s -w $(GO_LDFLAGS)
 
 .PHONY: vendor
 vendor:
@@ -32,26 +33,26 @@ clean:
 	rm -fr crc-admin-helper.spec
 
 $(BUILD_DIR)/macos-amd64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+	CGO_ENABLED=1 CGO_CFLAGS="-mmacosx-version-min=15.0" GOARCH=amd64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -tags cgo -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/macos-arm64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOARCH=arm64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+	CGO_ENABLED=1 CGO_CFLAGS="-mmacosx-version-min=15.0" GOARCH=arm64 GOOS=darwin go build -ldflags="$(LDFLAGS)" -tags cgo -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/linux-amd64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS_STATIC)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/linux-arm64/$(BINARY_NAME):
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS_STATIC)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags="$(LDFLAGS_STATIC)" -o $@ $(GO_BUILDFLAGS) ./cmd/admin-helper/
 
 $(BUILD_DIR)/macos-universal/$(BINARY_NAME): $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME) $(TOOLS_BINDIR)/makefat
 	mkdir -p $(BUILD_DIR)/macos-universal
 	cd $(BUILD_DIR) && $(TOOLS_BINDIR)/makefat macos-universal/$(BINARY_NAME) macos-amd64/$(BINARY_NAME) macos-arm64/$(BINARY_NAME)
 
-.PHONY: cross ## Cross compiles all binaries
-cross: $(BUILD_DIR)/macos-amd64/$(BINARY_NAME) $(BUILD_DIR)/macos-arm64/$(BINARY_NAME) $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-arm64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
+.PHONY: cross ## Cross compiles windows and linux binaries
+cross: $(BUILD_DIR)/linux-amd64/$(BINARY_NAME) $(BUILD_DIR)/linux-arm64/$(BINARY_NAME) $(BUILD_DIR)/windows-amd64/$(BINARY_NAME).exe
 
 .PHONY: macos-universal ## Creates macOS universal binary
 macos-universal: lint test $(BUILD_DIR)/macos-universal/$(BINARY_NAME)
@@ -67,7 +68,11 @@ release: clean lint test cross macos-universal
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
+ifeq ($(shell go env GOOS),darwin)
+	CGO_ENABLED=1 CGO_CFLAGS="-mmacosx-version-min=15.0" go build -ldflags="$(LDFLAGS)" -tags cgo -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
+else
+	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS_STATIC)" -o $(BINARY_NAME) $(GO_BUILDFLAGS) ./cmd/admin-helper/
+endif
 
 .PHONY: lint
 lint: $(TOOLS_BINDIR)/golangci-lint
@@ -76,6 +81,15 @@ lint: $(TOOLS_BINDIR)/golangci-lint
 .PHONY: test
 test:
 	go test ./...
+
+.PHONY: sandbox-test ## Run sandbox restriction tests (macOS only)
+sandbox-test:
+ifeq ($(shell go env GOOS),darwin)
+	CGO_ENABLED=1 CGO_CFLAGS="-mmacosx-version-min=15.0" go build -o verify_sandbox verify_sandbox.go
+	./verify_sandbox
+else
+	@echo "sandbox-test: skipped (macOS only)"
+endif
 
 .PHONY: spec
 spec: crc-admin-helper.spec

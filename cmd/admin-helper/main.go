@@ -10,6 +10,13 @@ import (
 )
 
 func main() {
+	// Apply sandbox immediately after startup (macOS only, no-op on other platforms)
+	// This restricts the process to only access /etc/hosts and denies network/exec
+	if err := applySandbox(); err != nil {
+		// Non-fatal: warn but continue for compatibility
+		fmt.Fprintf(os.Stderr, "Warning: failed to apply sandbox: %v\n", err)
+	}
+
 	rootCmd := &cobra.Command{
 		Use:          "admin-helper",
 		Version:      constants.Version,
