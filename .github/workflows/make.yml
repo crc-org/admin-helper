@@ -28,7 +28,7 @@ jobs:
       - name: Tests
         run: make test
       - name: Upload artifats
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: crc-admin-helper executables
           path: "out/**/*"
