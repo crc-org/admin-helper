@@ -155,9 +155,11 @@ func (w *wrapper) toIssue(pass *analysis.Pass, failure *lint.Failure) *goanalysi
 		if failure.Filename() == f.Name() {
 			issue.SuggestedFixes = []analysis.SuggestedFix{{
 				TextEdits: []analysis.TextEdit{{
-					Pos:     f.LineStart(failure.Position.Start.Line),
-					End:     goanalysis.EndOfLinePos(f, failure.Position.End.Line),
-					NewText: []byte(failure.ReplacementLine),
+					Pos: f.LineStart(failure.Position.Start.Line),
+					End: goanalysis.EndOfLinePos(f, failure.Position.End.Line),
+					// ReplacementLine doesn't contain the full line (missing newline), so we have to add a newline.
+					// Also `failure.Position.End.Offset` is at the end of the node but not the line.
+					NewText: []byte(failure.ReplacementLine + "\n"),
 				}},
 			}}
 		}
@@ -207,12 +209,15 @@ func getConfig(cfg *config.ReviveSettings) (*lint.Config, error) {
 }
 
 func createConfigMap(cfg *config.ReviveSettings) map[string]any {
+	const severity = "severity"
+
 	rawRoot := map[string]any{
-		"confidence":     cfg.Confidence,
-		"severity":       cfg.Severity,
-		"errorCode":      cfg.ErrorCode,
-		"warningCode":    cfg.WarningCode,
-		"enableAllRules": cfg.EnableAllRules,
+		"confidence":         cfg.Confidence,
+		severity:             cfg.Severity,
+		"errorCode":          cfg.ErrorCode,
+		"warningCode":        cfg.WarningCode,
+		"enableAllRules":     cfg.EnableAllRules,
+		"enableDefaultRules": cfg.EnableDefaultRules,
 
 		// Should be managed with `linters.exclusions.generated`.
 		"ignoreGeneratedHeader": false,
@@ -221,7 +226,7 @@ func createConfigMap(cfg *config.ReviveSettings) map[string]any {
 	rawDirectives := map[string]map[string]any{}
 	for _, directive := range cfg.Directives {
 		rawDirectives[directive.Name] = map[string]any{
-			"severity": directive.Severity,
+			severity: directive.Severity,
 		}
 	}
 
@@ -232,7 +237,7 @@ func createConfigMap(cfg *config.ReviveSettings) map[string]any {
 	rawRules := map[string]map[string]any{}
 	for _, s := range cfg.Rules {
 		rawRules[s.Name] = map[string]any{
-			"severity":  s.Severity,
+			severity:    s.Severity,
 			"arguments": safeTomlSlice(s.Arguments),
 			"disabled":  s.Disabled,
 			"exclude":   s.Exclude,
@@ -269,7 +274,7 @@ func safeTomlSlice(r []any) []any {
 }
 
 // This element is not exported by revive, so we need copy the code.
-// Extracted from https://github.com/mgechev/revive/blob/v1.13.0/config/config.go#L16
+// Extracted from https://github.com/mgechev/revive/blob/v1.15.0/config/config.go#L16
 var defaultRules = []lint.Rule{
 	&rule.VarDeclarationsRule{},
 	&rule.PackageCommentsRule{},
@@ -321,6 +326,7 @@ var allRules = append([]lint.Rule{
 	&rule.EnforceRepeatedArgTypeStyleRule{},
 	&rule.EnforceSliceStyleRule{},
 	&rule.EnforceSwitchStyleRule{},
+	&rule.EpochNamingRule{},
 	&rule.FileHeaderRule{},
 	&rule.FileLengthLimitRule{},
 	&rule.FilenameFormatRule{},
@@ -347,6 +353,7 @@ var allRules = append([]lint.Rule{
 	&rule.NestedStructs{},
 	&rule.OptimizeOperandsOrderRule{},
 	&rule.PackageDirectoryMismatchRule{},
+	&rule.PackageNamingRule{},
 	&rule.RangeValAddress{},
 	&rule.RangeValInClosureRule{},
 	&rule.RedundantBuildTagRule{},
@@ -371,6 +378,7 @@ var allRules = append([]lint.Rule{
 	&rule.UseFmtPrintRule{},
 	&rule.UselessBreak{},
 	&rule.UselessFallthroughRule{},
+	&rule.UseSlicesSort{},
 	&rule.UseWaitGroupGoRule{},
 	&rule.WaitGroupByValueRule{},
 }, defaultRules...)
