@@ -11,13 +11,14 @@ package main
 import "C"
 import (
 	"fmt"
+	"os"
 	"unsafe"
 
 	"github.com/crc-org/admin-helper/pkg/sandbox"
 )
 
 func applySandbox() error {
-	cProfile := C.CString(sandbox.Profile)
+	cProfile := C.CString(sandbox.Profile(os.Getenv("HOME")))
 	defer C.free(unsafe.Pointer(cProfile))
 
 	var errBuf *C.char
