@@ -37,7 +37,7 @@ func GetLogger() *Logger {
 
 func logWriter() io.Writer {
 	if path := os.Getenv(constants.LogFileEnvVar); path != "" {
-		f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+		f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600) // #nosec G703 this is a user-provided path by design
 		if err == nil {
 			return f
 		}
