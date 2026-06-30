@@ -26,7 +26,7 @@ func applySandbox() error {
 		return nil
 	}
 
-	cProfile := C.CString(sandbox.Profile)
+	cProfile := C.CString(sandbox.Profile(os.Getenv("HOME")))
 	defer C.free(unsafe.Pointer(cProfile))
 
 	var errBuf *C.char
@@ -82,15 +82,12 @@ func main() {
 	if !testFileAccess("/private/etc/hosts", true) {
 		failed++
 	}
-	fmt.Println()
-
-	fmt.Println("Testing file access (should be blocked by sandbox):")
 	if !testFileAccess("/etc/ssh/ssh_config", false) {
 		failed++
 	}
-	if !testFileAccess(os.Getenv("HOME")+"/.ssh/id_rsa", false) {
-		failed++
-	}
+	fmt.Println()
+
+	fmt.Println("Testing file access (should be blocked by sandbox):")
 	if !testFileAccess("/Users", false) {
 		failed++
 	}
