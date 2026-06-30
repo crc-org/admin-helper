@@ -117,7 +117,7 @@ func (h *Hosts) Add(ipRaw string, hosts []string) error {
 
 	h.addNewHostEntries(hostEntries, lines, ip)
 
-	return h.File.SaveHostsFile()
+	return h.saveHostsFile()
 }
 
 func (h *Hosts) addNewHostEntries(hostEntries []string, lines []*libhosty.HostsFileLine, ip net.IP) {
@@ -219,7 +219,7 @@ func (h *Hosts) Remove(hosts []string) error {
 		}
 	}
 
-	return h.File.SaveHostsFile()
+	return h.saveHostsFile()
 }
 
 func (h *Hosts) removeHostFromLine(line *libhosty.HostsFileLine, hostIdx int, i int) {
@@ -258,7 +258,7 @@ func (h *Hosts) Clean() error {
 		return emptyLineErr
 	}
 
-	return h.File.SaveHostsFile()
+	return h.saveHostsFile()
 }
 
 func (h *Hosts) checkIsWritable() error {
