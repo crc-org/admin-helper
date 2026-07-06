@@ -14,7 +14,7 @@ github.com/davecgh/go-spew/spew
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
-# github.com/kardianos/service v1.2.4
+# github.com/kardianos/service v1.3.0
 ## explicit; go 1.23.0
 github.com/kardianos/service
 # github.com/kr/pretty v0.1.0
