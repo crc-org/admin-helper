@@ -25,7 +25,7 @@ func TestAdd(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 entry1`), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2", "entry3"}))
 	assert.NoError(t, host.Add("127.0.0.2", []string{"entry4"}))
@@ -39,7 +39,7 @@ func TestAddMoreThen9Hosts(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2", "entry3", "entry3", "entry4", "entry5", "entry6", "entry7", "entry8", "entry9", "entry10"}))
 
@@ -52,7 +52,7 @@ func TestAddMoreThan18Hosts(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry0"}))
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2", "entry3", "entry3", "entry4", "entry5", "entry6", "entry7", "entry8", "entry9", "entry10", "entry11", "entry12", "entry13", "entry14", "entry15", "entry16", "entry17", "entry18", "entry19", "entry20"}))
@@ -66,7 +66,7 @@ func TestAddMoreThen9HostsInMultipleLines(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1 entry10 entry2 entry3 entry4 entry5 entry6 entry7", "127.0.0.1        entry11 entry12 entry13 entry14 entry15 entry16 entry17 entry18")+eol()), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry8", "entry9", "entry10"}))
 
@@ -79,7 +79,7 @@ func TestRemove(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1", "entry2"}))
 
 	assert.NoError(t, host.Remove([]string{"entry2"}))
@@ -93,7 +93,7 @@ func TestClean(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1 entry1.suffix1 entry2.suffix2")), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Clean())
 
@@ -106,7 +106,7 @@ func TestCleanWithoutCrcSection(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Clean())
 
@@ -119,7 +119,7 @@ func TestContains(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 entry1.suffix1 entry2.suffix2`), 0600))
 
-	host := hosts(t, hostsFile)
+	host := readOnlyHosts(t, hostsFile)
 
 	assert.True(t, host.Contains("127.0.0.1", "entry1.suffix1"))
 	assert.False(t, host.Contains("127.0.0.2", "entry1.suffix1"))
@@ -130,13 +130,8 @@ func TestSuffixFilter(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(`127.0.0.1 localhost localhost.localdomain`), 0600))
 
-	config, _ := libhosty.NewHostsFileConfig(hostsFile)
-	file, err := libhosty.InitWithConfig(config)
-	assert.NoError(t, err)
-	host := Hosts{
-		File:       file,
-		HostFilter: defaultFilter,
-	}
+	host := writableHosts(t, hostsFile)
+	host.HostFilter = defaultFilter
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry1.crc.testing"}))
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry2.nested.crc.testing"}))
@@ -151,7 +146,7 @@ func TestAddMoreThan9HostsWithFullLine(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1  entry2 entry3 entry4 entry5 entry6 entry7 entry8 entry9")+eol()), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry10"}))
 
@@ -164,7 +159,7 @@ func TestAddMoreThan9HostsWithOverfullLine(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("127.0.0.1        entry1  entry2 entry3 entry4 entry5 entry6 entry7 entry8 entry9 entry10")+eol()), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Add("127.0.0.1", []string{"entry11"}))
 
@@ -177,7 +172,7 @@ func TestRemoveOnOldHostFile(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+"127.0.0.1 entry1 entry2"), 0600))
 
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"entry1", "entry2"}))
 
@@ -189,7 +184,7 @@ func TestRemoveOnOldHostFile(t *testing.T) {
 func TestRemoveMultipleForwardSameLine(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   entry1 entry2")), 0600))
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"entry1", "entry2"}))
 
@@ -201,7 +196,7 @@ func TestRemoveMultipleForwardSameLine(t *testing.T) {
 func TestRemoveMultipleBackwardsSameLine(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   entry1 entry2")), 0600))
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"entry2", "entry1"}))
 
@@ -213,7 +208,7 @@ func TestRemoveMultipleBackwardsSameLine(t *testing.T) {
 func TestRemoveMultipleLines(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate+eol()+crcSection("192.168.130.11   api.crc.testing", "192.168.130.11    oauth-openshift.apps-crc.testing")), 0600))
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"api.crc.testing", "oauth-openshift.apps-crc.testing"}))
 
@@ -225,7 +220,7 @@ func TestRemoveMultipleLines(t *testing.T) {
 func TestRemoveMultipleNoCrcSection(t *testing.T) {
 	hostsFile := filepath.Join(t.TempDir(), "hosts")
 	assert.NoError(t, os.WriteFile(hostsFile, []byte("192.168.130.11   entry1 entry2"+eol()+"192.168.130.11   entry3 entry4"), 0600))
-	host := hosts(t, hostsFile)
+	host := writableHosts(t, hostsFile)
 
 	assert.NoError(t, host.Remove([]string{"entry1", "entry2", "entry3", "entry4"}))
 
@@ -234,15 +229,56 @@ func TestRemoveMultipleNoCrcSection(t *testing.T) {
 	assert.Equal(t, "", string(content))
 }
 
-func hosts(t *testing.T, hostsFile string) Hosts {
+func TestReadOnlyHostsRejectsWrites(t *testing.T) {
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
+	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
+
+	host := readOnlyHosts(t, hostsFile)
+
+	assert.EqualError(t, host.Add("127.0.0.1", []string{"entry1"}), "hosts file is read only")
+	assert.EqualError(t, host.Remove([]string{"localhost"}), "hosts file is read only")
+	assert.EqualError(t, host.Clean(), "hosts file is read only")
+	assert.True(t, host.Contains("127.0.0.1", "localhost"))
+}
+
+func TestCloseReleasesFileHandle(t *testing.T) {
+	hostsFile := filepath.Join(t.TempDir(), "hosts")
+	assert.NoError(t, os.WriteFile(hostsFile, []byte(hostsTemplate), 0600))
+
+	host := writableHosts(t, hostsFile)
+	assert.NotNil(t, host.GoFileHandle)
+
+	assert.NoError(t, host.Close())
+	assert.Nil(t, host.GoFileHandle)
+	assert.NoError(t, host.Close())
+}
+
+func writableHosts(t *testing.T, hostsFile string) Hosts {
+	return newTestHosts(t, hostsFile, false)
+}
+
+func readOnlyHosts(t *testing.T, hostsFile string) Hosts {
+	return newTestHosts(t, hostsFile, true)
+}
+
+func newTestHosts(t *testing.T, hostsFile string, readOnly bool) Hosts {
 	config, _ := libhosty.NewHostsFileConfig(hostsFile)
 	file, err := libhosty.InitWithConfig(config)
 	assert.NoError(t, err)
+
+	var goFile *os.File
+	if !readOnly && runtime.GOOS != "windows" {
+		goFile, err = os.OpenFile(hostsFile, os.O_RDWR, 0)
+		assert.NoError(t, err)
+	}
+
 	return Hosts{
 		File: file,
 		HostFilter: func(_ string) bool {
 			return true
 		},
+		GoFileHandle: goFile,
+		ReadOnly:     readOnly,
 	}
 }
 

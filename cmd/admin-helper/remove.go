@@ -20,11 +20,11 @@ func remove(args []string) error {
 		return nil
 	}
 
-	hosts, err := hosts.New()
+	hostFile, err := hosts.NewWritable()
 	if err != nil {
 		return err
 	}
-	err = hosts.Remove(args)
+	err = hostFile.Remove(args)
 	logger := logging.GetLogger()
 	logger.LogModification(logging.Modification{
 		Operation: "remove",

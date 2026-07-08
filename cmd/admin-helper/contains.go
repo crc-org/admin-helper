@@ -17,7 +17,7 @@ var Contains = &cobra.Command{
 }
 
 func contains(args []string) error {
-	hosts, err := hosts.New()
+	hosts, err := hosts.NewReadOnly()
 	if err != nil {
 		return err
 	}

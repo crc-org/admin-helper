@@ -21,11 +21,11 @@ func add(args []string) error {
 	if len(args) < 2 {
 		return fmt.Errorf("adding to hosts file requires an ip and a hostname")
 	}
-	hosts, err := hosts.New()
+	hostFile, err := hosts.NewWritable()
 	if err != nil {
 		return err
 	}
-	err = hosts.Add(args[0], args[1:])
+	err = hostFile.Add(args[0], args[1:])
 	logger := logging.GetLogger()
 	logger.LogModification(logging.Modification{
 		Operation: "add",

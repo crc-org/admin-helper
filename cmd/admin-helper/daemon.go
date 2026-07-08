@@ -88,13 +88,16 @@ func (p *program) Start(s service.Service) error {
 			_ = logger.Error(err)
 			return
 		}
-		hosts, err := hosts.New()
+		hostFile, err := hosts.NewWritable()
 		if err != nil {
+			_ = ln.Close()
 			_ = logger.Error(err)
 			return
 		}
+		defer hostFile.Close()
+
 		s := &http.Server{
-			Handler:      api.Mux(hosts),
+			Handler:      api.Mux(hostFile),
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
 		}
