@@ -42,8 +42,19 @@ func NewReadOnly() (*Hosts, error) {
 	return new(true)
 }
 
+// NewWritable opens the hosts file while still running as root (setuid),
+// then drops privileges to the invoking user.
 func NewWritable() (*Hosts, error) {
-	return new(false)
+	h, err := new(false)
+	if err != nil {
+		_ = DropPrivileges()
+		return nil, err
+	}
+	if err := DropPrivileges(); err != nil {
+		_ = h.closeFileHandle()
+		return nil, err
+	}
+	return h, nil
 }
 
 func new(readOnly bool) (*Hosts, error) {
