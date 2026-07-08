@@ -21,11 +21,11 @@ func clean(args []string) error {
 		return fmt.Errorf("clean requires at least one domain suffix")
 	}
 
-	hosts, err := hosts.New()
+	hostFile, err := hosts.NewWritable()
 	if err != nil {
 		return err
 	}
-	err = hosts.Clean()
+	err = hostFile.Clean()
 	logger := logging.GetLogger()
 	logger.LogModification(logging.Modification{
 		Operation: "clean",
