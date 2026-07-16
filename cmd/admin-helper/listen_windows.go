@@ -17,10 +17,14 @@ func listen() (net.Listener, error) {
 	}
 	sddl += fmt.Sprintf("(A;;GRGW;;;%s)", sid)
 
-	return winio.ListenPipe(`\\.\pipe\crc-admin-helper`, &winio.PipeConfig{
+	ln, err := winio.ListenPipe(`\\.\pipe\crc-admin-helper`, &winio.PipeConfig{
 		SecurityDescriptor: sddl,  // Administrators and system
 		MessageMode:        true,  // Use message mode so that CloseWrite() is supported
 		InputBufferSize:    65536, // Use 64KB buffers to improve performance
 		OutputBufferSize:   65536,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return newVerifiedListener(ln), nil
 }
