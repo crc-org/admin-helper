@@ -30,9 +30,9 @@ func main() {
 		log.Fatal(err)
 	}
 	bin, err := io.ReadAll(res.Body)
-	defer res.Body.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer res.Body.Close()
 	fmt.Println(string(bin))
 }
