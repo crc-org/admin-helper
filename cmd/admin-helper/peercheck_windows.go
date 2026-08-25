@@ -35,7 +35,7 @@ func getClientExePath(pipeHandle windows.Handle) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("OpenProcess(%d): %w", pid, err)
 	}
-	defer windows.CloseHandle(proc)
+	defer func() { _ = windows.CloseHandle(proc) }()
 
 	buf := make([]uint16, windows.MAX_PATH)
 	size := uint32(len(buf))
