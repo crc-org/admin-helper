@@ -37,8 +37,8 @@ func getClientExePath(pipeHandle windows.Handle) (string, error) {
 	}
 	defer func() { _ = windows.CloseHandle(proc) }()
 
-	buf := make([]uint16, windows.MAX_PATH)
-	size := uint32(len(buf))
+	size := uint32(windows.MAX_PATH)
+	buf := make([]uint16, size)
 	if err := windows.QueryFullProcessImageName(proc, 0, &buf[0], &size); err != nil {
 		return "", fmt.Errorf("QueryFullProcessImageName(%d): %w", pid, err)
 	}
