@@ -25,7 +25,7 @@ jobs:
       - name: Build
         run: make cross
       - name: lint
-        run: make lint
+        run: make cross-lint
       - name: Tests
         run: make test
       - name: Upload artifats
