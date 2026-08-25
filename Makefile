@@ -72,6 +72,12 @@ build:
 lint: $(TOOLS_BINDIR)/golangci-lint
 	$(TOOLS_BINDIR)/golangci-lint run
 
+.PHONY: cross-lint
+cross-lint:
+	GOOS=linux $(MAKE) lint
+	GOOS=darwin $(MAKE) lint
+	GOOS=windows $(MAKE) lint
+
 .PHONY: test
 test:
 	go test ./...
