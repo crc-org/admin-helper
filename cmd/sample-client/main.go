@@ -6,7 +6,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	bin, err := ioutil.ReadAll(res.Body)
+	bin, err := io.ReadAll(res.Body)
 	defer res.Body.Close()
 	if err != nil {
 		log.Fatal(err)
