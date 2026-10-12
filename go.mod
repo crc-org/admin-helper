@@ -3,7 +3,7 @@ module github.com/crc-org/admin-helper
 go 1.26.0
 
 require (
-	github.com/Microsoft/go-winio v0.6.2
+	github.com/Microsoft/go-winio v0.6.3
 	github.com/areYouLazy/libhosty v1.1.0
 	github.com/kardianos/service v1.3.0
 	github.com/spf13/cobra v1.10.2
